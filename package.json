@@ -1,36 +1,63 @@
 {
-  "name": "AutoScalingMemo_assets",
+  "name": "auto_scaling_memo",
   "version": "0.1.0",
   "description": "Internet Computer starter application",
-  "keywords": ["Internet Computer", "Motoko", "JavaScript", "Canister"],
+  "keywords": [
+    "Internet Computer",
+    "Motoko",
+    "JavaScript",
+    "Canister"
+  ],
   "scripts": {
     "build": "webpack",
     "prebuild": "npm run copy:types",
     "start": "webpack serve --mode development --env development",
     "prestart": "npm run copy:types",
-    "copy:types": "rsync -avr .dfx/$(echo ${DFX_NETWORK:-'**'})/canisters/** --exclude='assets/' --exclude='idl/' --exclude='*.wasm' --delete src/declarations"
+    "copy:types": "rsync -avr .dfx/$(echo ${DFX_NETWORK:-'**'})/canisters/** --exclude='assets/' --exclude='idl/' --exclude='*.wasm' --delete src/declarations",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "devDependencies": {
+    "@chakra-ui/react": "^1.8.7",
     "@dfinity/agent": "0.10.4",
+    "@dfinity/auth-client": "^0.10.4",
     "@dfinity/candid": "0.10.4",
     "@dfinity/principal": "0.10.4",
+    "@emotion/react": "^11.8.2",
+    "@emotion/styled": "^11.8.1",
+    "@types/isomorphic-fetch": "^0.0.36",
+    "@types/jest": "^27.4.1",
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^17.0.14",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/recoil": "^0.0.9",
     "assert": "2.0.0",
     "buffer": "6.0.3",
     "copy-webpack-plugin": "^9.0.1",
     "events": "3.3.0",
+    "framer-motion": "^6.2.8",
     "html-webpack-plugin": "5.5.0",
+    "isomorphic-fetch": "^3.0.0",
+    "jest": "^27.5.1",
     "process": "0.11.10",
+    "react-router-dom": "^6.3.0",
+    "recoil": "^0.7.0",
     "stream-browserify": "3.0.0",
     "terser-webpack-plugin": "5.2.5",
+    "ts-jest": "^27.1.4",
+    "ts-loader": "^9.2.8",
     "util": "0.12.4",
     "webpack": "5.63.0",
     "webpack-cli": "4.9.1",
-    "webpack-dev-server": "^4.4.0"
+    "webpack-dev-server": "^4.4.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "browserslist": [
     "last 2 chrome version",
     "last 2 firefox version",
     "last 2 safari version",
     "last 2 edge version"
-  ]
+  ],
+  "dependencies": {},
+  "type": "module"
 }
