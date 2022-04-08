@@ -1,0 +1,5 @@
+type Memo/2 = Memo;
+type MemoId/2 = MemoId;
+actor {
+  stable var _stableDatastores : [(MemoId/2, Memo/2)]
+};

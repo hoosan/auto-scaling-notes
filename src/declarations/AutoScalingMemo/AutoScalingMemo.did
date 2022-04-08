@@ -1,3 +1,48 @@
-service : {
-  greet: (text) -> (text);
-}
+type UserId__1 = principal;
+type UserId = principal;
+type Self = 
+ service {
+   balance: () -> (nat) query;
+   createMemo: (text, vec text, text) -> (Result_3);
+   currentDatastoreCanisterId: () -> (Result_1) query;
+   datastoreCanisterIds: () -> (Result_2) query;
+   initDataStoreCanister: () -> (Result_1);
+   isRegistered: () -> (bool) query;
+   register: () -> (Result);
+ };
+type Result_3 = 
+ variant {
+   err: text;
+   ok: DefiniteMemo;
+ };
+type Result_2 = 
+ variant {
+   err: text;
+   ok: vec DatastoreCanisterId;
+ };
+type Result_1 = 
+ variant {
+   err: text;
+   ok: DatastoreCanisterId;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok: UserId;
+ };
+type MemoId = nat;
+type DefiniteMemo = 
+ record {
+   canisterId: DatastoreCanisterId__1;
+   content: text;
+   createdAt: int;
+   id: MemoId;
+   tags: vec text;
+   title: text;
+   updatedAt: int;
+   userId: UserId__1;
+ };
+type DatastoreCanisterId__1 = principal;
+type DatastoreCanisterId = principal;
+type Byte = nat;
+service : (Byte) -> Self
