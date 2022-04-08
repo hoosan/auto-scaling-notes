@@ -3,9 +3,10 @@ import { Button } from '@chakra-ui/react';
 
 export interface LoginButtonProps {
   onClick: () => Promise<void>;
+  text: string;
 }
 
-export const LoginButton: React.FC<LoginButtonProps> = ({ onClick }) => {
+export const LoginButton: React.FC<LoginButtonProps> = ({ onClick, text }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
@@ -26,7 +27,7 @@ export const LoginButton: React.FC<LoginButtonProps> = ({ onClick }) => {
       disabled={isLoading}
       onClick={handleClick}
     >
-      Login
+      {text}
     </Button>
   );
 };
