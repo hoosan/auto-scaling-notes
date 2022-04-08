@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { atom, useRecoilState } from 'recoil';
+import { atom, useRecoilState, useRecoilTransaction_UNSTABLE } from 'recoil';
 import { AuthClient } from '@dfinity/auth-client';
-import { HttpAgentOptions } from '@dfinity/agent';
+import { HttpAgentOptions, Identity } from '@dfinity/agent';
 import { Principal } from '@dfinity/principal';
 
 import {
@@ -31,31 +31,21 @@ const autoScalingMemoActor = curriedCreateActor<IAutoScalingMemo>(
 
 export function useAuthentication() {
   const [user, setUser] = useRecoilState(userState);
-  const [authClient, setAuthClient] = useState<AuthClient>();
-  const [agentOptions, setAgentOptions] = useState<HttpAgentOptions>();
+  const [identity, setIdentity] = useState<Identity>();
   const [isLogin, setIsLogin] = useState(false);
 
   const handleAuthenticated = async (authClient: AuthClient) => {
-    const identity = await authClient.getIdentity();
-    setAgentOptions({ identity });
-    const actor = autoScalingMemoActor({ agentOptions });
-    const isRegistered = await actor.isRegistered();
-    let res = isRegistered ? await actor.userId() : await actor.register();
-
-    let userId: Principal;
-    if ('ok' in res) {
-      userId = res.ok;
-    } else {
-      throw new Error();
-    }
-    setUser((prev) => ({ ...prev, uid: userId }));
+    await getUser(await authClient.getIdentity());
     setIsLogin(true);
   };
 
   const handleLoginClick = async () => {
+    const authClient = await AuthClient.create();
+
     if (!authClient) {
       throw new Error('Failed to use auth client.');
     }
+
     await authClient.login({
       onSuccess: async () => {
         handleAuthenticated(authClient);
@@ -70,25 +60,41 @@ export function useAuthentication() {
   };
 
   const handleLogoutClick = async () => {
-    if (!authClient) {
-      throw new Error('Failed to use auth client.');
-    }
+    const authClient = await AuthClient.create();
     await authClient.logout();
     setUser(null);
-    setAgentOptions(undefined);
+    setIdentity(undefined);
     setIsLogin(false);
   };
 
-  const init = async () => {
+  const isAuth = async () => {
     const authClient = await AuthClient.create();
-    setAuthClient(authClient);
     if (await authClient.isAuthenticated()) {
-      handleAuthenticated(authClient);
+      setIsLogin(true);
+    }
+    const identity = await authClient.getIdentity();
+    const isAnonymous = identity.getPrincipal().isAnonymous();
+    if (!isAnonymous) {
+      await getUser(identity);
     }
   };
 
+  const getUser = async (identity: Identity) => {
+    const actor = autoScalingMemoActor({ agentOptions: { identity } });
+    const isRegistered = await actor.isRegistered();
+    let res = isRegistered ? await actor.userId() : await actor.register();
+
+    let userId: Principal;
+    if ('ok' in res) {
+      userId = res.ok;
+    } else {
+      throw new Error(res.err);
+    }
+    setUser((prev) => ({ ...prev, uid: userId }));
+  };
+
   useEffect(() => {
-    init();
+    isAuth();
   }, []);
 
   return {
@@ -96,7 +102,5 @@ export function useAuthentication() {
     handleLoginClick,
     handleLogoutClick,
     isLogin,
-    agentOptions,
-    authClient,
   };
 }
