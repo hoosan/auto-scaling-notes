@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { atom, useRecoilState, useRecoilTransaction_UNSTABLE } from 'recoil';
+import { atom, useRecoilState } from 'recoil';
 import { AuthClient } from '@dfinity/auth-client';
-import { HttpAgentOptions, Identity } from '@dfinity/agent';
+import { Identity, ActorSubclass } from '@dfinity/agent';
 import { Principal } from '@dfinity/principal';
 
 import {
@@ -33,6 +33,8 @@ export function useAuthentication() {
   const [user, setUser] = useRecoilState(userState);
   const [identity, setIdentity] = useState<Identity>();
   const [isLogin, setIsLogin] = useState(false);
+
+  const [mainActor, setMainActor] = useState<ActorSubclass<IAutoScalingMemo>>();
 
   const handleAuthenticated = async (authClient: AuthClient) => {
     await getUser(await authClient.getIdentity());
@@ -81,6 +83,7 @@ export function useAuthentication() {
 
   const getUser = async (identity: Identity) => {
     const actor = autoScalingMemoActor({ agentOptions: { identity } });
+    setMainActor(actor);
     const isRegistered = await actor.isRegistered();
     let res = isRegistered ? await actor.userId() : await actor.register();
 
@@ -102,5 +105,6 @@ export function useAuthentication() {
     handleLoginClick,
     handleLogoutClick,
     isLogin,
+    mainActor,
   };
 }

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useAuthentication } from '../hooks/useAuthentication';
 
-import { LoginButton } from './LoginButton';
+import { Button } from './Button';
 
 export const LoginPage = () => {
   const { user, isLogin, handleLoginClick, handleLogoutClick } =
@@ -13,9 +13,9 @@ export const LoginPage = () => {
       <h1>Login page</h1>
       <p>{isLogin ? `User ID: ${user?.uid}` : 'Not logged in.'}</p>
       {isLogin ? (
-        <LoginButton onClick={handleLogoutClick} text={'Logout'} />
+        <Button onClick={handleLogoutClick} text={'Logout'} />
       ) : (
-        <LoginButton onClick={handleLoginClick} text={'Login'} />
+        <Button onClick={handleLoginClick} text={'Login'} />
       )}
     </>
   );

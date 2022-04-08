@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Button } from '@chakra-ui/react';
+import { Button as ChButton } from '@chakra-ui/react';
 
-export interface LoginButtonProps {
+export interface ButtonProps {
   onClick: () => Promise<void>;
   text: string;
 }
 
-export const LoginButton: React.FC<LoginButtonProps> = ({ onClick, text }) => {
+export const Button: React.VFC<ButtonProps> = ({ onClick, text }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
@@ -16,7 +16,7 @@ export const LoginButton: React.FC<LoginButtonProps> = ({ onClick, text }) => {
   };
 
   return (
-    <Button
+    <ChButton
       color='white'
       px='1em'
       fontSize='md'
@@ -28,6 +28,6 @@ export const LoginButton: React.FC<LoginButtonProps> = ({ onClick, text }) => {
       onClick={handleClick}
     >
       {text}
-    </Button>
+    </ChButton>
   );
 };
