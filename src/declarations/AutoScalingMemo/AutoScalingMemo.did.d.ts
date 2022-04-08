@@ -33,6 +33,7 @@ export interface Self {
   'initDataStoreCanister' : () => Promise<Result_1>,
   'isRegistered' : () => Promise<boolean>,
   'register' : () => Promise<Result>,
+  'userId' : () => Promise<Result>,
 }
 export type UserId = Principal;
 export type UserId__1 = Principal;

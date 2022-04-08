@@ -37,6 +37,7 @@ export const idlFactory = ({ IDL }) => {
     'initDataStoreCanister' : IDL.Func([], [Result_1], []),
     'isRegistered' : IDL.Func([], [IDL.Bool], ['query']),
     'register' : IDL.Func([], [Result], []),
+    'userId' : IDL.Func([], [Result], ['query']),
   });
   return Self;
 };

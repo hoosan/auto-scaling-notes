@@ -9,6 +9,7 @@ type Self =
    initDataStoreCanister: () -> (Result_1);
    isRegistered: () -> (bool) query;
    register: () -> (Result);
+   userId: () -> (Result) query;
  };
 type Result_3 = 
  variant {

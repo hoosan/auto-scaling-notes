@@ -57,8 +57,14 @@ shared ({ caller }) actor class Self(_dataSize: Types.Byte) {
     Cycles.balance()
   };
 
+  public query ({ caller }) func userId(): async Result.Result<UserId,Text> {
+    switch (_users.get(caller)) {
+      case (?user_) { #ok (user_.id) };
+      case null { #err "You are not registered." };
+    }
+  };
+
   public query ({ caller }) func datastoreCanisterIds(): async Result.Result<[DatastoreCanisterId],Text> {
-    if (Principal.isAnonymous(caller)) { return #err "You need to be authenticated." };
     if (not (_isUserRegistered caller)) { return #err "You are not registered." };
     #ok (List.toArray(_datastoreCanisterIds))
   };

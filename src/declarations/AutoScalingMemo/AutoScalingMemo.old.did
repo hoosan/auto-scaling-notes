@@ -43,4 +43,5 @@ service : {
   initDataStoreCanister: () -> (Result_1);
   isRegistered: () -> (bool) query;
   register: () -> (Result);
+  userId: () -> (Result) query;
 }

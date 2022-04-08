@@ -13,7 +13,7 @@ import {
   Self as IDatastore,
   DefiniteMemo,
 } from '../declarations/Datastore/Datastore.did';
-import { curriedCreateActor } from './utils/createActor';
+import { curriedCreateActor } from '../AutoScalingMemo_assets/src/utils/createActor';
 import localCanisterIds from '../../.dfx/local/canister_ids.json';
 const canisterId = localCanisterIds.AutoScalingMemo.local;
 
@@ -58,6 +58,15 @@ describe('User registration tests', () => {
 
   it('should check Alice is already registered.', async () => {
     expect(await actorOfAlice.isRegistered()).toBe(true);
+  });
+
+  it('should check Alice has a user id.', async () => {
+    const response = await actorOfAlice.userId();
+    if ('ok' in response) {
+      expect(response.ok._isPrincipal).toBe(true);
+    } else {
+      throw new Error(response.err);
+    }
   });
 });
 
@@ -246,6 +255,15 @@ describe('User authentication tests', () => {
     const response = await actorOfBob.createMemo(title, tags, content);
     if ('ok' in response) {
       throw new Error(`Bob should not create his memo.`);
+    } else {
+      expect(response.err).toBe('You are not registered.');
+    }
+  });
+
+  it('should check Bob doesnot have a user id.', async () => {
+    const response = await actorOfBob.userId();
+    if ('ok' in response) {
+      throw new Error('Bob should not have a user id.');
     } else {
       expect(response.err).toBe('You are not registered.');
     }
