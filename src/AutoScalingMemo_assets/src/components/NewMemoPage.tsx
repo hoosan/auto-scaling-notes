@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+
 import { Box, VStack, Flex, Input, Textarea, Spacer } from '@chakra-ui/react';
 import { Button } from './Button';
 
 import { useAuthentication } from '../hooks/useAuthentication';
+import { Layout } from './Layout';
 
 export const NewMemoPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +27,7 @@ export const NewMemoPage = () => {
   };
 
   return (
-    <>
+    <Layout>
       <VStack
         align='stretch'
         bg='white'
@@ -33,6 +35,7 @@ export const NewMemoPage = () => {
         px='20px'
         spacing='20px'
         borderRadius='lg'
+        mt='20px'
       >
         <Spacer />
         <Box>
@@ -65,6 +68,6 @@ export const NewMemoPage = () => {
         </Flex>
         <Spacer />
       </VStack>
-    </>
+    </Layout>
   );
 };

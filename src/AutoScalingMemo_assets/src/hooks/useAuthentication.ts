@@ -59,6 +59,7 @@ export function useAuthentication() {
       // Maximum authorization expiration is 8 days
       maxTimeToLive: days * hours * nanoseconds,
     });
+    setIsLogin(true);
   };
 
   const handleLogoutClick = async () => {

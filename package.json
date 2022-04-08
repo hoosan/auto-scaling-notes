@@ -24,6 +24,10 @@
     "@dfinity/principal": "0.10.4",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
+    "@iconify/icons-bx": "^1.2.3",
+    "@iconify/icons-iconoir": "^1.2.3",
+    "@iconify/icons-ri": "^1.2.1",
+    "@iconify/react": "^3.2.1",
     "@types/isomorphic-fetch": "^0.0.36",
     "@types/jest": "^27.4.1",
     "@types/react": "^17.0.43",
@@ -39,6 +43,8 @@
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.5.1",
     "process": "0.11.10",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-router-dom": "^6.3.0",
     "recoil": "^0.7.0",
     "stream-browserify": "3.0.0",
@@ -48,9 +54,7 @@
     "util": "0.12.4",
     "webpack": "5.63.0",
     "webpack-cli": "4.9.1",
-    "webpack-dev-server": "^4.4.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "webpack-dev-server": "^4.4.0"
   },
   "browserslist": [
     "last 2 chrome version",
@@ -58,6 +62,5 @@
     "last 2 safari version",
     "last 2 edge version"
   ],
-  "dependencies": {},
   "type": "module"
 }
