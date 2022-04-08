@@ -76,6 +76,7 @@ export function useAuthentication() {
       setIsLogin(true);
     }
     const identity = await authClient.getIdentity();
+    setIdentity(identity);
     const isAnonymous = identity.getPrincipal().isAnonymous();
     if (!isAnonymous) {
       await getUser(identity);
@@ -107,5 +108,6 @@ export function useAuthentication() {
     handleLogoutClick,
     isLogin,
     mainActor,
+    identity,
   };
 }

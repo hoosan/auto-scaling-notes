@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 
 import { PrivateRoute } from './components/lib/PrivateRoute';
-import { LoginPage } from './components/LoginPage';
+import { TopPage } from './components/TopPage';
 import { NewMemoPage } from './components/NewMemoPage';
 
 const App = () => (
@@ -12,8 +12,7 @@ const App = () => (
     <ChakraProvider>
       <BrowserRouter>
         <Routes>
-          {/* <Route path='/' element={<LoginPage />} /> */}
-          <Route path='/' element={<NewMemoPage />} />
+          <Route path='/' element={<TopPage />} />
           <Route path='/new' element={<PrivateRoute />}>
             <Route path='' element={<NewMemoPage />} />
           </Route>

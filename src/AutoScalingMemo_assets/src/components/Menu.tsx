@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   Box,
@@ -9,9 +9,9 @@ import {
   DrawerHeader,
   DrawerBody,
   Text,
-  VStack,
   HStack,
-  Spacer,
+  List,
+  ListItem,
   useDisclosure,
 } from '@chakra-ui/react';
 import { InlineIcon as InlineIconIconify } from '@iconify/react';
@@ -43,20 +43,30 @@ export const Menu = () => {
         <DrawerContent>
           <DrawerHeader borderBottomWidth='1px'>Auto Scaling Memo</DrawerHeader>
           <DrawerBody fontSize='lg'>
-            <VStack alignItems='left' spacing='20px'>
-              <HStack mt='10px'>
-                <InlineIconIconify icon={addPage} height='24' />
-                <Text>New Memo</Text>
-              </HStack>
-              <HStack>
-                <InlineIconIconify icon={bookStack} height='24' />
-                <Text>Your Memos</Text>
-              </HStack>
-              <HStack as='button' onClick={handleClick}>
-                <InlineIconIconify icon={logoutCircleRLine} height='24' />
-                <Text>Logout</Text>
-              </HStack>
-            </VStack>
+            <List alignItems='left' spacing='20px'>
+              <ListItem>
+                <Link to='/new'>
+                  <HStack mt='10px'>
+                    <InlineIconIconify icon={addPage} height='24' />
+                    <Text>New Memo</Text>
+                  </HStack>
+                </Link>
+              </ListItem>
+              <ListItem>
+                <Link to='/'>
+                  <HStack>
+                    <InlineIconIconify icon={bookStack} height='24' />
+                    <Text>Your Memos</Text>
+                  </HStack>
+                </Link>
+              </ListItem>
+              <ListItem>
+                <HStack as='button' onClick={handleClick}>
+                  <InlineIconIconify icon={logoutCircleRLine} height='24' />
+                  <Text>Logout</Text>
+                </HStack>
+              </ListItem>
+            </List>
           </DrawerBody>
         </DrawerContent>
       </Drawer>

@@ -21,7 +21,9 @@ export const NewMemoPage = () => {
     }
     const res = await mainActor.createMemo(title, tags, content);
     if ('ok' in res) {
+      console.log(res.ok);
     } else {
+      console.log(res.err);
     }
     setIsLoading(false);
   };
