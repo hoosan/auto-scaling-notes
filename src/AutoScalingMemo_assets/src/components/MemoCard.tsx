@@ -16,6 +16,7 @@ export const MemoCard: React.VFC<Props> = ({ title, updatedAt, content }) => {
         textOverflow='ellipsis'
         overflow='hidden'
         whiteSpace='nowrap'
+        fontSize='xl'
       >
         {title}
       </Text>

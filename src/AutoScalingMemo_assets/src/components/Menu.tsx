@@ -8,10 +8,12 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerBody,
+  DrawerFooter,
   Text,
   HStack,
   List,
   ListItem,
+  Image,
   useDisclosure,
 } from '@chakra-ui/react';
 import { InlineIcon as InlineIconIconify } from '@iconify/react';
@@ -87,6 +89,12 @@ export const Menu = () => {
               )}
             </List>
           </DrawerBody>
+          <DrawerFooter>
+            <Image
+              src='/ic-badge-powered-by_bg-white.png'
+              alt='Powerd by Internet Computer'
+            />
+          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     </>

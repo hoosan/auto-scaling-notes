@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Flex, Spacer, HStack } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
+import { Box, Flex, Spacer, HStack, Text } from '@chakra-ui/react';
 
 import { useAuthentication } from '../hooks/useAuthentication';
 import { LoginButton } from './LoginButton';
@@ -16,9 +17,12 @@ export const Header = () => {
         alignItems='center'
         justifyContent='between'
       >
-        <Box ml='10px'>
+        <Flex ml='10px' alignItems='center'>
           <Menu />
-        </Box>
+          <Link to='/'>
+            <Text fontSize='xl'>Auto Scaling Memo</Text>
+          </Link>
+        </Flex>
         <Spacer />
         <Box as='nav'>
           <HStack mr='10px' spacing={{ base: '20px', sm: '20px' }}>
