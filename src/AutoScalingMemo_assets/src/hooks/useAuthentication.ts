@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { atom, useRecoilState } from 'recoil';
 import { AuthClient } from '@dfinity/auth-client';
-import { Identity, ActorSubclass } from '@dfinity/agent';
+import { Identity } from '@dfinity/agent';
 import { Principal } from '@dfinity/principal';
 
 import {
@@ -15,9 +15,11 @@ import { Self as IDatastore } from '../../../declarations/Datastore/Datastore.di
 import { curriedCreateActor } from '../utils/createActor';
 import { User } from '../models/User';
 
-const userState = atom<User | null>({
+const userState = atom<User>({
   key: 'user',
-  default: null,
+  default: {
+    isLogin: false,
+  },
 });
 
 const days = BigInt(1);
@@ -34,12 +36,13 @@ const autoScalingMemoActor = curriedCreateActor<IAutoScalingMemo>(
 
 export function useAuthentication() {
   const [user, setUser] = useRecoilState(userState);
-  const [identity, setIdentity] = useState<Identity>();
-  const [isLogin, setIsLogin] = useState(false);
+
+  const logout = () => {
+    setUser({ isLogin: false });
+  };
 
   const handleAuthenticated = async (authClient: AuthClient) => {
     await getUser(await authClient.getIdentity());
-    setIsLogin(true);
   };
 
   const handleLoginClick = async () => {
@@ -60,28 +63,20 @@ export function useAuthentication() {
       // Maximum authorization expiration is 8 days
       maxTimeToLive: days * hours * nanoseconds,
     });
-    setIsLogin(true);
   };
 
   const handleLogoutClick = async () => {
     const authClient = await AuthClient.create();
     await authClient.logout();
-    setUser(null);
-    setIdentity(undefined);
-    setIsLogin(false);
+    logout();
   };
 
   const isAuth = async () => {
     const authClient = await AuthClient.create();
     const identity = await authClient.getIdentity();
-    setIdentity(identity);
     const isAnonymous = identity.getPrincipal().isAnonymous();
-    if (!isAnonymous) {
+    if (!isAnonymous && (await authClient.isAuthenticated())) {
       await getUser(identity);
-    }
-
-    if (await authClient.isAuthenticated()) {
-      setIsLogin(true);
     }
   };
 
@@ -96,18 +91,18 @@ export function useAuthentication() {
     } else {
       throw new Error(res.err);
     }
-    setUser((prev) => ({ ...prev, uid: userId }));
+    setUser((prev) => ({ ...prev, identity, isLogin: true }));
   };
 
   const getDatastoreActor = (canisterId: Principal) => {
     return curriedCreateActor<IDatastore>(idlFactoryDatastore)(canisterId)({
-      agentOptions: { identity },
+      agentOptions: { identity: user?.identity },
     });
   };
 
   const getMainActor = () => {
     return autoScalingMemoActor({
-      agentOptions: { identity },
+      agentOptions: { identity: user?.identity },
     });
   };
 
@@ -117,7 +112,7 @@ export function useAuthentication() {
 
   return {
     user,
-    isLogin,
+    isLogin: user.isLogin,
     handleLoginClick,
     handleLogoutClick,
     getMainActor,

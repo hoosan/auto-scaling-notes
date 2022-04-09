@@ -5,6 +5,7 @@ import { Layout } from '../Layout';
 
 export const PrivateRoute = () => {
   const { isLogin } = useAuthentication();
+
   return isLogin ? (
     <Outlet />
   ) : (

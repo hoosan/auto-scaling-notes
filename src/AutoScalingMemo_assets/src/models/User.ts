@@ -1,6 +1,6 @@
-import { Principal } from '@dfinity/principal';
+import { Identity } from '@dfinity/agent';
 
 export interface User {
-  uid: string | Principal;
-  username?: string;
+  identity?: Identity;
+  isLogin: boolean;
 }

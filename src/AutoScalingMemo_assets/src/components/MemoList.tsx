@@ -13,6 +13,10 @@ export const MemoList = () => {
   const [memos, setMemos] = useState<DefiniteMemo[]>([]);
 
   const fetchMemos = async () => {
+    if (!isLogin) {
+      return;
+    }
+
     const response = await getMainActor().datastoreCanisterIds();
     if (!('ok' in response)) {
       return;

@@ -11,7 +11,6 @@ export const LoginPage = () => {
   return (
     <>
       <h1>Login page</h1>
-      <p>{isLogin ? `User ID: ${user?.uid}` : 'Not logged in.'}</p>
       {isLogin ? (
         <Button onClick={handleLogoutClick} text={'Logout'} />
       ) : (
