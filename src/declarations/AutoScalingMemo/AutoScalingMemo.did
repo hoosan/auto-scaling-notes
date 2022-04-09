@@ -3,12 +3,15 @@ type UserId = principal;
 type Self = 
  service {
    balance: () -> (nat) query;
+   count: () -> (nat) query;
    createMemo: (text, vec text, text) -> (Result_3);
    currentDatastoreCanisterId: () -> (Result_1) query;
    datastoreCanisterIds: () -> (Result_2) query;
-   initDataStoreCanister: () -> (Result_1);
+   getCanisterIdByMemoId: (MemoId) -> (Result_1) query;
    isRegistered: () -> (bool) query;
+   numberOfDataPerCanister: () -> (nat) query;
    register: () -> (Result);
+   sizeOfDatastoreCanisterIds: () -> (nat) query;
    userId: () -> (Result) query;
  };
 type Result_3 = 
@@ -31,13 +34,14 @@ type Result =
    err: text;
    ok: UserId;
  };
+type MemoId__1 = nat;
 type MemoId = nat;
 type DefiniteMemo = 
  record {
    canisterId: DatastoreCanisterId__1;
    content: text;
    createdAt: int;
-   id: MemoId;
+   id: MemoId__1;
    tags: vec text;
    title: text;
    updatedAt: int;

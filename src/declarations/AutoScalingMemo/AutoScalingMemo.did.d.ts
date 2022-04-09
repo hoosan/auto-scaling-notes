@@ -3,7 +3,7 @@ export type Byte = bigint;
 export type DatastoreCanisterId = Principal;
 export type DatastoreCanisterId__1 = Principal;
 export interface DefiniteMemo {
-  'id' : MemoId,
+  'id' : MemoId__1,
   'title' : string,
   'content' : string,
   'userId' : UserId__1,
@@ -13,6 +13,7 @@ export interface DefiniteMemo {
   'canisterId' : DatastoreCanisterId__1,
 }
 export type MemoId = bigint;
+export type MemoId__1 = bigint;
 export type Result = { 'ok' : UserId } |
   { 'err' : string };
 export type Result_1 = { 'ok' : DatastoreCanisterId } |
@@ -23,6 +24,7 @@ export type Result_3 = { 'ok' : DefiniteMemo } |
   { 'err' : string };
 export interface Self {
   'balance' : () => Promise<bigint>,
+  'count' : () => Promise<bigint>,
   'createMemo' : (
       arg_0: string,
       arg_1: Array<string>,
@@ -30,9 +32,11 @@ export interface Self {
     ) => Promise<Result_3>,
   'currentDatastoreCanisterId' : () => Promise<Result_1>,
   'datastoreCanisterIds' : () => Promise<Result_2>,
-  'initDataStoreCanister' : () => Promise<Result_1>,
+  'getCanisterIdByMemoId' : (arg_0: MemoId) => Promise<Result_1>,
   'isRegistered' : () => Promise<boolean>,
+  'numberOfDataPerCanister' : () => Promise<bigint>,
   'register' : () => Promise<Result>,
+  'sizeOfDatastoreCanisterIds' : () => Promise<bigint>,
   'userId' : () => Promise<Result>,
 }
 export type UserId = Principal;

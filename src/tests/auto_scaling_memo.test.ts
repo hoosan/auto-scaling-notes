@@ -85,13 +85,17 @@ describe('CRUD tests', () => {
 
   let memos: DefiniteMemo[];
 
+  let returnedMemo1: DefiniteMemo;
+  let returnedMemo2: DefiniteMemo;
+
   it('should check that Alice can create her fist memo.', async () => {
     const { title, tags, content } = firstMemo;
     const response = await actorOfAlice.createMemo(title, tags, content);
     if ('ok' in response) {
-      expect(response.ok.title).toBe(title);
-      expect(response.ok.tags).toEqual(tags);
-      expect(response.ok.content).toBe(content);
+      returnedMemo1 = response.ok;
+      expect(returnedMemo1.title).toBe(title);
+      expect(returnedMemo1.tags).toEqual(tags);
+      expect(returnedMemo1.content).toBe(content);
     } else {
       throw new Error(response.err);
     }
@@ -101,9 +105,10 @@ describe('CRUD tests', () => {
     const { title, tags, content } = secondMemo;
     const response = await actorOfAlice.createMemo(title, tags, content);
     if ('ok' in response) {
-      expect(response.ok.title).toBe(title);
-      expect(response.ok.tags).toEqual(tags);
-      expect(response.ok.content).toBe(content);
+      returnedMemo2 = response.ok;
+      expect(returnedMemo2.title).toBe(title);
+      expect(returnedMemo2.tags).toEqual(tags);
+      expect(returnedMemo2.content).toBe(content);
     } else {
       throw new Error(response.err);
     }
@@ -171,6 +176,26 @@ describe('CRUD tests', () => {
           `A memo does not exist for ID: ${id}`
         );
       }
+    } else {
+      throw new Error(response.err);
+    }
+  });
+
+  it('should check a canister ID can be accessed by using a memo ID (1).', async () => {
+    const { id, canisterId } = returnedMemo1;
+    const response = await actorOfAlice.getCanisterIdByMemoId(id);
+    if ('ok' in response) {
+      expect(response.ok).toEqual(canisterId);
+    } else {
+      throw new Error(response.err);
+    }
+  });
+
+  it('should check a canister ID can be accessed by using a memo ID (2).', async () => {
+    const { id, canisterId } = returnedMemo2;
+    const response = await actorOfAlice.getCanisterIdByMemoId(id);
+    if ('ok' in response) {
+      expect(response.ok).toEqual(canisterId);
     } else {
       throw new Error(response.err);
     }
@@ -260,7 +285,7 @@ describe('User authentication tests', () => {
     }
   });
 
-  it('should check Bob doesnot have a user id.', async () => {
+  it("should check Bob doesn't have a user id.", async () => {
     const response = await actorOfBob.userId();
     if ('ok' in response) {
       throw new Error('Bob should not have a user id.');

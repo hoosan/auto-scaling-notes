@@ -6,4 +6,4 @@ dfx deploy --with-cycles 80000000000000 --argument '(1_000_000_000)' AutoScaling
 dfx deploy --argument '(1_000_000_000)' AutoScalingMemo_assets
 dfx canister create Datastore
 dfx build Datastore
-dfx canister call AutoScalingMemo initDataStoreCanister '()'
+# dfx canister call AutoScalingMemo initDataStoreCanister '()'
