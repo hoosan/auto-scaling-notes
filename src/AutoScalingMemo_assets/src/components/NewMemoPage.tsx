@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import { Box, VStack, Flex, Input, Textarea, Spacer } from '@chakra-ui/react';
-import { Button } from './Button';
 
 import { useAuthentication } from '../hooks/useAuthentication';
 import { Layout } from './Layout';
+import { Button } from './Button';
 
 export const NewMemoPage = () => {
+  const { getMainActor } = useAuthentication();
+  const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState([]);
   const [content, setContent] = useState('');
 
-  const { mainActor } = useAuthentication();
-
   const handleClick = async () => {
     setIsLoading(true);
-    if (!mainActor) {
-      return;
-    }
-    const res = await mainActor.createMemo(title, tags, content);
+
+    const res = await getMainActor().createMemo(title, tags, content);
     if ('ok' in res) {
       console.log(res.ok);
+      navigate('/');
     } else {
       console.log(res.err);
     }

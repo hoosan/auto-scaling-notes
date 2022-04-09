@@ -5,10 +5,13 @@ import { Identity, ActorSubclass } from '@dfinity/agent';
 import { Principal } from '@dfinity/principal';
 
 import {
-  canisterId,
+  canisterId as autoScalingMemoCanisterId,
   idlFactory as idlFactoryAutoScalingMemo,
 } from '../../../declarations/AutoScalingMemo';
+import { idlFactory as idlFactoryDatastore } from '../../../declarations/Datastore';
 import { Self as IAutoScalingMemo } from '../../../declarations/AutoScalingMemo/AutoScalingMemo.did';
+import { Self as IDatastore } from '../../../declarations/Datastore/Datastore.did';
+
 import { curriedCreateActor } from '../utils/createActor';
 import { User } from '../models/User';
 
@@ -21,20 +24,18 @@ const days = BigInt(1);
 const hours = BigInt(24);
 const nanoseconds = BigInt(3600000000000);
 
-if (!canisterId) {
+if (!autoScalingMemoCanisterId) {
   throw new Error('Canister id is not found.');
 }
 
 const autoScalingMemoActor = curriedCreateActor<IAutoScalingMemo>(
   idlFactoryAutoScalingMemo
-)(canisterId);
+)(autoScalingMemoCanisterId);
 
 export function useAuthentication() {
   const [user, setUser] = useRecoilState(userState);
   const [identity, setIdentity] = useState<Identity>();
   const [isLogin, setIsLogin] = useState(false);
-
-  const [mainActor, setMainActor] = useState<ActorSubclass<IAutoScalingMemo>>();
 
   const handleAuthenticated = async (authClient: AuthClient) => {
     await getUser(await authClient.getIdentity());
@@ -72,20 +73,20 @@ export function useAuthentication() {
 
   const isAuth = async () => {
     const authClient = await AuthClient.create();
-    if (await authClient.isAuthenticated()) {
-      setIsLogin(true);
-    }
     const identity = await authClient.getIdentity();
     setIdentity(identity);
     const isAnonymous = identity.getPrincipal().isAnonymous();
     if (!isAnonymous) {
       await getUser(identity);
     }
+
+    if (await authClient.isAuthenticated()) {
+      setIsLogin(true);
+    }
   };
 
   const getUser = async (identity: Identity) => {
     const actor = autoScalingMemoActor({ agentOptions: { identity } });
-    setMainActor(actor);
     const isRegistered = await actor.isRegistered();
     let res = isRegistered ? await actor.userId() : await actor.register();
 
@@ -98,16 +99,28 @@ export function useAuthentication() {
     setUser((prev) => ({ ...prev, uid: userId }));
   };
 
+  const getDatastoreActor = (canisterId: Principal) => {
+    return curriedCreateActor<IDatastore>(idlFactoryDatastore)(canisterId)({
+      agentOptions: { identity },
+    });
+  };
+
+  const getMainActor = () => {
+    return autoScalingMemoActor({
+      agentOptions: { identity },
+    });
+  };
+
   useEffect(() => {
     isAuth();
   }, []);
 
   return {
     user,
+    isLogin,
     handleLoginClick,
     handleLogoutClick,
-    isLogin,
-    mainActor,
-    identity,
+    getMainActor,
+    getDatastoreActor,
   };
 }

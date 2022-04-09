@@ -3,9 +3,9 @@ import { Box } from '@chakra-ui/react';
 
 import { Header } from './Header';
 
-export type Props = {
+export interface Props {
   children: React.ReactNode;
-};
+}
 
 export const Layout: React.VFC<Props> = ({ children }) => {
   return (
