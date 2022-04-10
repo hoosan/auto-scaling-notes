@@ -1,12 +1,12 @@
 export const idlFactory = ({ IDL }) => {
   const Byte = IDL.Nat;
   const UserId__1 = IDL.Principal;
-  const MemoId = IDL.Nat;
-  const MemoId__1 = IDL.Nat;
+  const NoteId = IDL.Nat;
+  const NoteId__1 = IDL.Nat;
   const UserId = IDL.Principal;
   const DatastoreCanisterId = IDL.Principal;
-  const DefiniteMemo = IDL.Record({
-    'id' : MemoId__1,
+  const DefiniteNote = IDL.Record({
+    'id' : NoteId__1,
     'title' : IDL.Text,
     'content' : IDL.Text,
     'userId' : UserId,
@@ -15,14 +15,14 @@ export const idlFactory = ({ IDL }) => {
     'updatedAt' : IDL.Int,
     'canisterId' : DatastoreCanisterId,
   });
-  const Result = IDL.Variant({ 'ok' : DefiniteMemo, 'err' : IDL.Text });
-  const Result_1 = IDL.Variant({ 'ok' : MemoId, 'err' : IDL.Text });
+  const Result = IDL.Variant({ 'ok' : DefiniteNote, 'err' : IDL.Text });
+  const Result_1 = IDL.Variant({ 'ok' : NoteId, 'err' : IDL.Text });
   const Self = IDL.Service({
-    'createMemo' : IDL.Func(
+    'createNote' : IDL.Func(
         [
           UserId__1,
           IDL.Principal,
-          MemoId,
+          NoteId,
           IDL.Text,
           IDL.Vec(IDL.Text),
           IDL.Text,
@@ -30,12 +30,12 @@ export const idlFactory = ({ IDL }) => {
         [Result],
         [],
       ),
-    'deleteMemo' : IDL.Func([MemoId], [Result_1], []),
-    'getAllMemos' : IDL.Func([], [IDL.Vec(DefiniteMemo)], ['query']),
-    'getMemoById' : IDL.Func([MemoId], [Result], ['query']),
-    'updateMemo' : IDL.Func(
+    'deleteNote' : IDL.Func([NoteId], [Result_1], []),
+    'getAllNotes' : IDL.Func([], [IDL.Vec(DefiniteNote)], ['query']),
+    'getNoteById' : IDL.Func([NoteId], [Result], ['query']),
+    'updateNote' : IDL.Func(
         [
-          MemoId,
+          NoteId,
           IDL.Opt(IDL.Text),
           IDL.Opt(IDL.Vec(IDL.Text)),
           IDL.Opt(IDL.Text),

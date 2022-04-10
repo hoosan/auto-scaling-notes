@@ -2,8 +2,8 @@ module {
 
   public type DatastoreCanisterId = Principal;
   public type UserId = Principal;
-  public type MemoId = Nat;
-  public type MemoContent = Text;
+  public type NoteId = Nat;
+  public type NoteContent = Text;
   public type Byte = Nat;
 
   public type User = {
@@ -16,8 +16,8 @@ module {
     name: Text;
   };
 
-  public type Memo = {
-    id: MemoId;
+  public type Note = {
+    id: NoteId;
     canisterId: DatastoreCanisterId;
     userId: UserId;
     var title: Text;
@@ -27,8 +27,8 @@ module {
     var updatedAt: Int;
   };
 
-  public type DefiniteMemo = {
-    id: MemoId;
+  public type DefiniteNote = {
+    id: NoteId;
     canisterId: DatastoreCanisterId;
     userId: UserId;
     title: Text;
@@ -39,22 +39,22 @@ module {
   };
 
   public type Datastore = actor {
-    createMemo : shared (
+    createNote : shared (
       userId: UserId,
       canisterId: Principal,
-      memoId: MemoId,
+      noteId: NoteId,
       title: Text,
       tags: [Text],
       content: Text
-    ) -> async { #ok : DefiniteMemo; #err : Text; };
-    getAllMemos : shared query () -> async [DefiniteMemo];
-    updateMemo : shared (
-      memoId: MemoId,
+    ) -> async { #ok : DefiniteNote; #err : Text; };
+    getAllNotes : shared query () -> async [DefiniteNote];
+    updateNote : shared (
+      noteId: NoteId,
       title: ?Text,
       tags: ?[Text],
       content: ?Text
-    ) -> async { #ok : DefiniteMemo; #err : Text; };
-    deleteMemo : shared (memoId: MemoId) -> async { #ok : MemoId; #err : Text };
+    ) -> async { #ok : DefiniteNote; #err : Text; };
+    deleteNote : shared (noteId: NoteId) -> async { #ok : NoteId; #err : Text };
   }
 
 }

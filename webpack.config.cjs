@@ -42,7 +42,7 @@ const canisterEnvVariables = initCanisterEnv();
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-const frontendDirectory = 'AutoScalingMemo_assets';
+const frontendDirectory = 'AutoScalingNote_assets';
 
 const asset_entry = path.join('src', frontendDirectory, 'src', 'index.html');
 

@@ -5,11 +5,11 @@ import { Identity } from '@dfinity/agent';
 import { Principal } from '@dfinity/principal';
 
 import {
-  canisterId as autoScalingMemoCanisterId,
-  idlFactory as idlFactoryAutoScalingMemo,
-} from '../../../declarations/AutoScalingMemo';
+  canisterId as autoScalingNoteCanisterId,
+  idlFactory as idlFactoryAutoScalingNote,
+} from '../../../declarations/AutoScalingNote';
 import { idlFactory as idlFactoryDatastore } from '../../../declarations/Datastore';
-import { Self as IAutoScalingMemo } from '../../../declarations/AutoScalingMemo/AutoScalingMemo.did';
+import { Self as IAutoScalingNote } from '../../../declarations/AutoScalingNote/AutoScalingNote.did';
 import { Self as IDatastore } from '../../../declarations/Datastore/Datastore.did';
 
 import { curriedCreateActor } from '../utils/createActor';
@@ -26,13 +26,13 @@ const days = BigInt(1);
 const hours = BigInt(24);
 const nanoseconds = BigInt(3600000000000);
 
-if (!autoScalingMemoCanisterId) {
+if (!autoScalingNoteCanisterId) {
   throw new Error('Canister id is not found.');
 }
 
-const autoScalingMemoActor = curriedCreateActor<IAutoScalingMemo>(
-  idlFactoryAutoScalingMemo
-)(autoScalingMemoCanisterId);
+const autoScalingNoteActor = curriedCreateActor<IAutoScalingNote>(
+  idlFactoryAutoScalingNote
+)(autoScalingNoteCanisterId);
 
 export function useAuthentication() {
   const [user, setUser] = useRecoilState(userState);
@@ -81,17 +81,17 @@ export function useAuthentication() {
   };
 
   const getUser = async (identity: Identity) => {
-    const actor = autoScalingMemoActor({ agentOptions: { identity } });
+    const actor = autoScalingNoteActor({ agentOptions: { identity } });
     const isRegistered = await actor.isRegistered();
     let res = isRegistered ? await actor.userId() : await actor.register();
 
     let userId: Principal;
     if ('ok' in res) {
       userId = res.ok;
+      setUser((prev) => ({ ...prev, identity, isLogin: true }));
     } else {
       throw new Error(res.err);
     }
-    setUser((prev) => ({ ...prev, identity, isLogin: true }));
   };
 
   const getDatastoreActor = (canisterId: Principal) => {
@@ -101,7 +101,7 @@ export function useAuthentication() {
   };
 
   const getMainActor = () => {
-    return autoScalingMemoActor({
+    return autoScalingNoteActor({
       agentOptions: { identity: user?.identity },
     });
   };

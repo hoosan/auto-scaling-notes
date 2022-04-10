@@ -1,21 +1,21 @@
 {
   "canisters": {
-    "AutoScalingMemo": {
-      "main": "src/AutoScalingMemo/Main.mo",
+    "AutoScalingNote": {
+      "main": "src/AutoScalingNote/Main.mo",
       "type": "motoko"
     },
     "Datastore": {
-      "main": "src/AutoScalingMemo/Datastore.mo",
+      "main": "src/AutoScalingNote/Datastore.mo",
       "type": "motoko"
     },
-    "AutoScalingMemo_assets": {
-      "dependencies": ["AutoScalingMemo"],
+    "AutoScalingNote_assets": {
+      "dependencies": ["AutoScalingNote"],
       "frontend": {
-        "entrypoint": "src/AutoScalingMemo_assets/src/index.html"
+        "entrypoint": "src/AutoScalingNote_assets/src/index.html"
       },
       "source": [
-        "src/AutoScalingMemo_assets/assets",
-        "dist/AutoScalingMemo_assets/"
+        "src/AutoScalingNote_assets/assets",
+        "dist/AutoScalingNote_assets/"
       ],
       "type": "assets"
     }

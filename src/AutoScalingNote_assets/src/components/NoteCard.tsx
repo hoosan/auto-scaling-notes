@@ -8,7 +8,7 @@ export interface Props {
   content: string;
 }
 
-export const MemoCard: React.VFC<Props> = ({ title, updatedAt, content }) => {
+export const NoteCard: React.VFC<Props> = ({ title, updatedAt, content }) => {
   return (
     <Box>
       <Text

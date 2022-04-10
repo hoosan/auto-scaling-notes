@@ -38,7 +38,7 @@ export const Menu = () => {
       <Drawer placement='left' onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader borderBottomWidth='1px'>Auto Scaling Memo</DrawerHeader>
+          <DrawerHeader borderBottomWidth='1px'>Auto Scaling Note</DrawerHeader>
           <DrawerBody fontSize='lg'>
             <List alignItems='left' spacing='20px'>
               {isLogin ? (
@@ -47,7 +47,7 @@ export const Menu = () => {
                     <Link to='/new'>
                       <HStack mt='10px'>
                         <InlineIconIconify icon={addPage} height='24' />
-                        <Text>New Memo</Text>
+                        <Text>New Note</Text>
                       </HStack>
                     </Link>
                   </ListItem>
@@ -55,7 +55,7 @@ export const Menu = () => {
                     <Link to='/'>
                       <HStack>
                         <InlineIconIconify icon={bookStack} height='24' />
-                        <Text>Your Memos</Text>
+                        <Text>Your Notes</Text>
                       </HStack>
                     </Link>
                   </ListItem>

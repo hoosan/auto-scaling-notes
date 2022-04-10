@@ -2,8 +2,8 @@ import type { Principal } from '@dfinity/principal';
 export type Byte = bigint;
 export type DatastoreCanisterId = Principal;
 export type DatastoreCanisterId__1 = Principal;
-export interface DefiniteMemo {
-  'id' : MemoId__1,
+export interface DefiniteNote {
+  'id' : NoteId__1,
   'title' : string,
   'content' : string,
   'userId' : UserId__1,
@@ -12,27 +12,27 @@ export interface DefiniteMemo {
   'updatedAt' : bigint,
   'canisterId' : DatastoreCanisterId__1,
 }
-export type MemoId = bigint;
-export type MemoId__1 = bigint;
+export type NoteId = bigint;
+export type NoteId__1 = bigint;
 export type Result = { 'ok' : UserId } |
   { 'err' : string };
 export type Result_1 = { 'ok' : DatastoreCanisterId } |
   { 'err' : string };
 export type Result_2 = { 'ok' : Array<DatastoreCanisterId> } |
   { 'err' : string };
-export type Result_3 = { 'ok' : DefiniteMemo } |
+export type Result_3 = { 'ok' : DefiniteNote } |
   { 'err' : string };
 export interface Self {
   'balance' : () => Promise<bigint>,
   'count' : () => Promise<bigint>,
-  'createMemo' : (
+  'createNote' : (
       arg_0: string,
       arg_1: Array<string>,
       arg_2: string,
     ) => Promise<Result_3>,
   'currentDatastoreCanisterId' : () => Promise<Result_1>,
   'datastoreCanisterIds' : () => Promise<Result_2>,
-  'getCanisterIdByMemoId' : (arg_0: MemoId) => Promise<Result_1>,
+  'getCanisterIdByNoteId' : (arg_0: NoteId) => Promise<Result_1>,
   'isRegistered' : () => Promise<boolean>,
   'numberOfDataPerCanister' : () => Promise<bigint>,
   'register' : () => Promise<Result>,

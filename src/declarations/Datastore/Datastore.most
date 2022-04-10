@@ -1,5 +1,5 @@
-type Memo/2 = Memo;
-type MemoId/2 = MemoId;
+type Note/2 = Note;
+type NoteId/2 = NoteId;
 actor {
-  stable var _stableDatastores : [(MemoId/2, Memo/2)]
+  stable var _stableDatastores : [(NoteId/2, Note/2)]
 };

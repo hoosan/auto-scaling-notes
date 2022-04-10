@@ -3,16 +3,16 @@ import { Link } from 'react-router-dom';
 import { Principal } from '@dfinity/principal';
 import { Box, List, ListItem } from '@chakra-ui/react';
 
-import { DefiniteMemo } from '../../../declarations/Datastore/Datastore.did';
+import { DefiniteNote } from '../../../declarations/Datastore/Datastore.did';
 
 import { useAuthentication } from '../hooks/useAuthentication';
-import { MemoCard } from './MemoCard';
+import { NoteCard } from './NoteCard';
 
-export const MemoList = () => {
+export const NoteList = () => {
   const { isLogin, getMainActor, getDatastoreActor } = useAuthentication();
-  const [memos, setMemos] = useState<DefiniteMemo[]>([]);
+  const [notes, setNotes] = useState<DefiniteNote[]>([]);
 
-  const fetchMemos = async () => {
+  const fetchNotes = async () => {
     if (!isLogin) {
       return;
     }
@@ -23,14 +23,14 @@ export const MemoList = () => {
     }
 
     const canisterIds = response.ok;
-    const memosOnCanisters = await Promise.all(
+    const notesOnCanisters = await Promise.all(
       canisterIds.map(async (canisterId: Principal) => {
         const datastore = getDatastoreActor(canisterId);
-        return await datastore.getAllMemos();
+        return await datastore.getAllNotes();
       })
     );
 
-    const memos = memosOnCanisters
+    const notes = notesOnCanisters
       .reduce((acc, v) => acc.concat(v), [])
       .sort((a, b) => {
         if (a.updatedAt < b.updatedAt) {
@@ -40,20 +40,20 @@ export const MemoList = () => {
         }
         return 0;
       });
-    setMemos(memos);
+    setNotes(notes);
   };
 
   useEffect(() => {
-    fetchMemos();
+    fetchNotes();
   }, [isLogin]);
 
   return (
     <Box bg='white' mx='10px' borderRadius='lg' mt='20px' py='4px'>
       <List>
-        {memos.map((memo, index) => {
-          const { id, title, updatedAt, content } = memo;
+        {notes.map((note, index) => {
+          const { id, title, updatedAt, content } = note;
           const props =
-            index == memos.length - 1
+            index == notes.length - 1
               ? {}
               : {
                   borderBottom: '2px',
@@ -61,8 +61,8 @@ export const MemoList = () => {
                 };
           return (
             <ListItem key={index} {...props}>
-              <Link to={`/memo/${Number(id)}`}>
-                <MemoCard
+              <Link to={`/note/${Number(id)}`}>
+                <NoteCard
                   title={title}
                   updatedAt={updatedAt}
                   content={content}

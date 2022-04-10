@@ -2,31 +2,31 @@ type UserId__1 = principal;
 type UserId = principal;
 type Self = 
  service {
-   createMemo: (UserId__1, principal, MemoId, text, vec text, text) ->
+   createNote: (UserId__1, principal, NoteId, text, vec text, text) ->
     (Result);
-   deleteMemo: (MemoId) -> (Result_1);
-   getAllMemos: () -> (vec DefiniteMemo) query;
-   getMemoById: (MemoId) -> (Result) query;
-   updateMemo: (MemoId, opt text, opt vec text, opt text) -> (Result);
+   deleteNote: (NoteId) -> (Result_1);
+   getAllNotes: () -> (vec DefiniteNote) query;
+   getNoteById: (NoteId) -> (Result) query;
+   updateNote: (NoteId, opt text, opt vec text, opt text) -> (Result);
  };
 type Result_1 = 
  variant {
    err: text;
-   ok: MemoId;
+   ok: NoteId;
  };
 type Result = 
  variant {
    err: text;
-   ok: DefiniteMemo;
+   ok: DefiniteNote;
  };
-type MemoId__1 = nat;
-type MemoId = nat;
-type DefiniteMemo = 
+type NoteId__1 = nat;
+type NoteId = nat;
+type DefiniteNote = 
  record {
    canisterId: DatastoreCanisterId;
    content: text;
    createdAt: int;
-   id: MemoId__1;
+   id: NoteId__1;
    tags: vec text;
    title: text;
    updatedAt: int;

@@ -5,17 +5,17 @@ import { ChakraProvider } from '@chakra-ui/react';
 
 import { PrivateRoute } from './components/lib/PrivateRoute';
 import { TopPage } from './components/TopPage';
-import { NewMemoPage } from './components/NewMemoPage';
-import { EditMemoPage } from './components/EditMemoPage';
+import { NewNotePage } from './components/NewNotePage';
+import { EditNotePage } from './components/EditNotePage';
 import { NotFound } from './components/NotFound';
 
-const ValidatedEditMemoPage = () => {
+const ValidatedEditNotePage = () => {
   const params = useParams();
-  const memoId = params.memoId;
-  if (!memoId?.match(/\d+/)) {
+  const noteId = params.noteId;
+  if (!noteId?.match(/\d+/)) {
     return <NotFound />;
   } else {
-    return <EditMemoPage memoId={BigInt(parseInt(memoId))} />;
+    return <EditNotePage noteId={BigInt(parseInt(noteId))} />;
   }
 };
 
@@ -26,10 +26,10 @@ const App = () => (
         <Routes>
           <Route path='/' element={<TopPage />} />
           <Route path='/new' element={<PrivateRoute />}>
-            <Route path='' element={<NewMemoPage />} />
+            <Route path='' element={<NewNotePage />} />
           </Route>
-          <Route path='/memo' element={<PrivateRoute />}>
-            <Route path=':memoId' element={<ValidatedEditMemoPage />} />
+          <Route path='/note' element={<PrivateRoute />}>
+            <Route path=':noteId' element={<ValidatedEditNotePage />} />
           </Route>
           <Route path='*' element={<NotFound />} />
         </Routes>

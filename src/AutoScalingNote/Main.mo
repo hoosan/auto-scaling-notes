@@ -15,13 +15,13 @@ import Datastore "./Datastore";
 shared ({ caller }) actor class Self(_dataSize: Types.Byte) {
 
   type UserId = Types.UserId;
-  type MemoId = Types.MemoId;
+  type NoteId = Types.NoteId;
   type User = Types.User;
 
   type DatastoreCanisterId = Types.DatastoreCanisterId;
   type Byte = Types.Byte;
-  type Memo = Types.Memo;
-  type DefiniteMemo = Types.DefiniteMemo;
+  type Note = Types.Note;
+  type DefiniteNote = Types.DefiniteNote;
   
   let IC : ICType.Self = actor "aaaaa-aa";
   let _capacity : Byte = 4_000_000_000;
@@ -62,10 +62,10 @@ shared ({ caller }) actor class Self(_dataSize: Types.Byte) {
     }
   };
 
-  public query ({ caller }) func getCanisterIdByMemoId(memoId: MemoId) : async Result.Result<DatastoreCanisterId, Text> {
+  public query ({ caller }) func getCanisterIdByNoteId(noteId: NoteId) : async Result.Result<DatastoreCanisterId, Text> {
     if (not (_isUserRegistered caller)) { return #err "You are not registered." };
-    if (memoId >= _count) { return #err "Out of bounds error."};
-    let index = memoId / _numberOfDataPerCanister;
+    if (noteId >= _count) { return #err "Out of bounds error."};
+    let index = noteId / _numberOfDataPerCanister;
     switch (List.get(List.reverse(_datastoreCanisterIds), index)){
       case null { #err ("Canister ID is not found. index: " # Nat.toText(index) # " size: " # Nat.toText(List.size(_datastoreCanisterIds)))  };
       case (?id) { #ok id };
@@ -101,7 +101,7 @@ shared ({ caller }) actor class Self(_dataSize: Types.Byte) {
     }
   };
 
-  public shared ({ caller }) func createMemo(title: Text, tags: [Text], content: Text) : async Result.Result<DefiniteMemo, Text> {
+  public shared ({ caller }) func createNote(title: Text, tags: [Text], content: Text) : async Result.Result<DefiniteNote, Text> {
     if (not (_isUserRegistered caller)) { return #err "You are not registered." };
 
     // Check the current datastore has reached its limit.
@@ -115,14 +115,14 @@ shared ({ caller }) actor class Self(_dataSize: Types.Byte) {
       }
     };
 
-    let memoId = _count;
+    let noteId = _count;
     _count += 1;
 
     switch _currentDatastoreCanisterId {
       case null { #err "A datastore canister is currently null." };
       case (?canisterId_){
         let dataStoreCanister = _getDatastoreCanister(canisterId_);
-        await dataStoreCanister.createMemo(caller, canisterId_, memoId, title, tags, content);
+        await dataStoreCanister.createNote(caller, canisterId_, noteId, title, tags, content);
       }
     }
 
@@ -146,11 +146,11 @@ shared ({ caller }) actor class Self(_dataSize: Types.Byte) {
   private func _generateDataStoreCanister(): async Result.Result<DatastoreCanisterId,Text>{
     try {
       Cycles.add(4_000_000_000_000);
-      let memoStoreCanister = await Datastore.Self(_dataSize);
-      let canisterId = Principal.fromActor(memoStoreCanister);
+      let noteStoreCanister = await Datastore.Self(_dataSize);
+      let canisterId = Principal.fromActor(noteStoreCanister);
 
       _currentDatastoreCanisterId := ?canisterId;
-      _dataStoreCanister := ?memoStoreCanister;
+      _dataStoreCanister := ?noteStoreCanister;
       _datastoreCanisterIds := List.push(canisterId, _datastoreCanisterIds);
 
       let settings: ICType.CanisterSettings = { 

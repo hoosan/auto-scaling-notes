@@ -20,7 +20,7 @@ export const Header = () => {
         <Flex ml='10px' alignItems='center'>
           <Menu />
           <Link to='/'>
-            <Text fontSize='xl'>Auto Scaling Memo</Text>
+            <Text fontSize='xl'>Auto Scaling Note</Text>
           </Link>
         </Flex>
         <Spacer />

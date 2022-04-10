@@ -6,7 +6,7 @@ import { useAuthentication } from '../hooks/useAuthentication';
 import { Layout } from './Layout';
 import { Button } from './Button';
 
-export const NewMemoPage = () => {
+export const NewNotePage = () => {
   const { getMainActor } = useAuthentication();
   const navigate = useNavigate();
 
@@ -18,7 +18,7 @@ export const NewMemoPage = () => {
   const handleClick = async () => {
     setIsLoading(true);
 
-    const res = await getMainActor().createMemo(title, tags, content);
+    const res = await getMainActor().createNote(title, tags, content);
     if ('ok' in res) {
       console.log(res.ok);
       navigate('/');
@@ -44,7 +44,7 @@ export const NewMemoPage = () => {
           <Input
             disabled={isLoading}
             value={title}
-            placeholder='Untitled Memo'
+            placeholder='Untitled Note'
             size='lg'
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setTitle(e.target.value)

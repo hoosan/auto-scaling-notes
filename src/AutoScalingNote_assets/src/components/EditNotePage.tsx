@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Box, VStack, Flex, Input, Textarea, Spacer } from '@chakra-ui/react';
 import { Principal } from '@dfinity/principal';
-import { MemoId } from '../../../declarations/Datastore/Datastore.did';
+import { NoteId } from '../../../declarations/Datastore/Datastore.did';
 
 import { useAuthentication } from '../hooks/useAuthentication';
 import { Button } from './Button';
 import { Layout } from './Layout';
 
 export interface Props {
-  memoId: MemoId;
+  noteId: NoteId;
 }
 
-export const EditMemoPage: React.VFC<Props> = ({ memoId }) => {
+export const EditNotePage: React.VFC<Props> = ({ noteId }) => {
   const { isLogin, getMainActor, getDatastoreActor } = useAuthentication();
   const navigate = useNavigate();
 
@@ -33,9 +33,9 @@ export const EditMemoPage: React.VFC<Props> = ({ memoId }) => {
     const datastore = getDatastoreActor(canisterId);
 
     await datastore
-      .updateMemo(
-        memoId,
-        [title || 'Untitled Memo'],
+      .updateNote(
+        noteId,
+        [title || 'Untitled Note'],
         [tags],
         [content || '...']
       )
@@ -43,7 +43,7 @@ export const EditMemoPage: React.VFC<Props> = ({ memoId }) => {
         if ('ok' in res) {
           navigate('/');
         } else {
-          throw new Error('Failed to update a memo.');
+          throw new Error('Failed to update a note.');
         }
       })
       .catch((err: Error) => {
@@ -52,14 +52,14 @@ export const EditMemoPage: React.VFC<Props> = ({ memoId }) => {
     setIsLoading(false);
   };
 
-  const fetchMemo = async () => {
+  const fetchNote = async () => {
     if (!isLogin) {
       return;
     }
 
     setIsLoading(true);
     await getMainActor()
-      .getCanisterIdByMemoId(memoId)
+      .getCanisterIdByNoteId(noteId)
       .then((res) => {
         if ('ok' in res) {
           return res.ok;
@@ -69,7 +69,7 @@ export const EditMemoPage: React.VFC<Props> = ({ memoId }) => {
       })
       .then((canisterId) => {
         setCanisterId(canisterId);
-        return getDatastoreActor(canisterId).getMemoById(memoId);
+        return getDatastoreActor(canisterId).getNoteById(noteId);
       })
       .then((res) => {
         if ('ok' in res) {
@@ -89,7 +89,7 @@ export const EditMemoPage: React.VFC<Props> = ({ memoId }) => {
   };
 
   useEffect(() => {
-    fetchMemo();
+    fetchNote();
   }, [isLogin]);
 
   return (
@@ -108,7 +108,7 @@ export const EditMemoPage: React.VFC<Props> = ({ memoId }) => {
           <Input
             disabled={isLoading}
             value={title}
-            placeholder='Untitled Memo'
+            placeholder='Untitled Note'
             size='lg'
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setTitle(e.target.value)

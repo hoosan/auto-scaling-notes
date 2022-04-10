@@ -4,21 +4,21 @@ import { Principal } from '@dfinity/principal';
 import fetch from 'isomorphic-fetch';
 
 // @ts-ignore
-import { idlFactory as idlFactoryAutoScalingMemo } from '../declarations/AutoScalingMemo/AutoScalingMemo.did.js';
+import { idlFactory as idlFactoryAutoScalingNote } from '../declarations/AutoScalingNote/AutoScalingNote.did.js';
 // @ts-ignore
 import { idlFactory as idlFactoryDatastore } from '../declarations/Datastore/Datastore.did.js';
 
-import { Self as IAutoScalingMemo } from '../declarations/AutoScalingMemo/AutoScalingMemo.did';
+import { Self as IAutoScalingNote } from '../declarations/AutoScalingNote/AutoScalingNote.did';
 import {
   Self as IDatastore,
-  DefiniteMemo,
+  DefiniteNote,
 } from '../declarations/Datastore/Datastore.did';
-import { curriedCreateActor } from '../AutoScalingMemo_assets/src/utils/createActor';
+import { curriedCreateActor } from '../AutoScalingNote_assets/src/utils/createActor';
 import localCanisterIds from '../../.dfx/local/canister_ids.json';
-const canisterId = localCanisterIds.AutoScalingMemo.local;
+const canisterId = localCanisterIds.AutoScalingNote.local;
 
-const autoScalingMemoActor = curriedCreateActor<IAutoScalingMemo>(
-  idlFactoryAutoScalingMemo
+const autoScalingNoteActor = curriedCreateActor<IAutoScalingNote>(
+  idlFactoryAutoScalingNote
 )(canisterId);
 const datastoreActor = curriedCreateActor<IDatastore>(idlFactoryDatastore);
 
@@ -29,7 +29,7 @@ const identityOptionOfAlice = {
     host: 'http://localhost:8000',
   },
 };
-const actorOfAlice = autoScalingMemoActor(identityOptionOfAlice);
+const actorOfAlice = autoScalingNoteActor(identityOptionOfAlice);
 
 const identityOptionOfBob = {
   agentOptions: {
@@ -38,7 +38,7 @@ const identityOptionOfBob = {
     host: 'http://localhost:8000',
   },
 };
-const actorOfBob = autoScalingMemoActor(identityOptionOfBob);
+const actorOfBob = autoScalingNoteActor(identityOptionOfBob);
 
 jest.setTimeout(60000);
 
@@ -71,62 +71,62 @@ describe('User registration tests', () => {
 });
 
 describe('CRUD tests', () => {
-  const firstMemo = {
-    title: 'First test memo',
+  const firstNote = {
+    title: 'First test note',
     tags: ['tagA', 'tagB'],
-    content: 'This is a test memo',
+    content: 'This is a test note',
   };
 
-  const secondMemo = {
-    title: 'Second test memo',
+  const secondNote = {
+    title: 'Second test note',
     tags: ['tagC', 'tagD'],
-    content: 'This is a second test memo',
+    content: 'This is a second test note',
   };
 
-  let memos: DefiniteMemo[];
+  let notes: DefiniteNote[];
 
-  let returnedMemo1: DefiniteMemo;
-  let returnedMemo2: DefiniteMemo;
+  let returnedNote1: DefiniteNote;
+  let returnedNote2: DefiniteNote;
 
-  it('should check that Alice can create her fist memo.', async () => {
-    const { title, tags, content } = firstMemo;
-    const response = await actorOfAlice.createMemo(title, tags, content);
+  it('should check that Alice can create her fist note.', async () => {
+    const { title, tags, content } = firstNote;
+    const response = await actorOfAlice.createNote(title, tags, content);
     if ('ok' in response) {
-      returnedMemo1 = response.ok;
-      expect(returnedMemo1.title).toBe(title);
-      expect(returnedMemo1.tags).toEqual(tags);
-      expect(returnedMemo1.content).toBe(content);
+      returnedNote1 = response.ok;
+      expect(returnedNote1.title).toBe(title);
+      expect(returnedNote1.tags).toEqual(tags);
+      expect(returnedNote1.content).toBe(content);
     } else {
       throw new Error(response.err);
     }
   });
 
-  it('should check that Alice can create her second memo.', async () => {
-    const { title, tags, content } = secondMemo;
-    const response = await actorOfAlice.createMemo(title, tags, content);
+  it('should check that Alice can create her second note.', async () => {
+    const { title, tags, content } = secondNote;
+    const response = await actorOfAlice.createNote(title, tags, content);
     if ('ok' in response) {
-      returnedMemo2 = response.ok;
-      expect(returnedMemo2.title).toBe(title);
-      expect(returnedMemo2.tags).toEqual(tags);
-      expect(returnedMemo2.content).toBe(content);
+      returnedNote2 = response.ok;
+      expect(returnedNote2.title).toBe(title);
+      expect(returnedNote2.tags).toEqual(tags);
+      expect(returnedNote2.content).toBe(content);
     } else {
       throw new Error(response.err);
     }
   });
 
-  it('should check that Alice can get her memos.', async () => {
-    const { title, tags, content } = secondMemo;
+  it('should check that Alice can get her notes.', async () => {
+    const { title, tags, content } = secondNote;
 
     const response = await actorOfAlice.datastoreCanisterIds();
     if ('ok' in response) {
       const canisterIds = response.ok;
-      const memosOnCanisters = await Promise.all(
+      const notesOnCanisters = await Promise.all(
         canisterIds.map(async (canisterId: Principal) => {
           const datastore = datastoreActor(canisterId)(identityOptionOfAlice);
-          return await datastore.getAllMemos();
+          return await datastore.getAllNotes();
         })
       );
-      memos = memosOnCanisters
+      notes = notesOnCanisters
         .reduce((acc, v) => acc.concat(v), [])
         .sort((a, b) => {
           if (a.createdAt < b.createdAt) {
@@ -136,44 +136,44 @@ describe('CRUD tests', () => {
           }
           return 0;
         });
-      const memo = memos[0];
-      expect(memo.title).toBe(title);
-      expect(memo.tags).toEqual(tags);
-      expect(memo.content).toBe(content);
+      const note = notes[0];
+      expect(note.title).toBe(title);
+      expect(note.tags).toEqual(tags);
+      expect(note.content).toBe(content);
     } else {
       throw new Error(response.err);
     }
   });
 
-  it('should check that Alice can update her memo.', async () => {
-    const memoToUpdate = memos[0];
+  it('should check that Alice can update her note.', async () => {
+    const noteToUpdate = notes[0];
     const newTitie = 'This is updated title.';
-    const { id, canisterId } = memoToUpdate;
+    const { id, canisterId } = noteToUpdate;
     const datastore = datastoreActor(canisterId)(identityOptionOfAlice);
-    const response = await datastore.updateMemo(id, [newTitie], [], []);
+    const response = await datastore.updateNote(id, [newTitie], [], []);
     if ('ok' in response) {
-      const updatedMemo = response.ok;
-      expect(updatedMemo.title).toBe(newTitie);
+      const updatedNote = response.ok;
+      expect(updatedNote.title).toBe(newTitie);
     } else {
       throw new Error(response.err);
     }
   });
 
-  it('should check that Alice can delete her memo.', async () => {
-    const memoToDellete = memos[0];
-    const { id, canisterId } = memoToDellete;
+  it('should check that Alice can delete her note.', async () => {
+    const noteToDellete = notes[0];
+    const { id, canisterId } = noteToDellete;
     const datastore = datastoreActor(canisterId)(identityOptionOfAlice);
-    const response = await datastore.deleteMemo(id);
+    const response = await datastore.deleteNote(id);
     if ('ok' in response) {
-      const expectErrorResponse = await datastore.getMemoById(id);
+      const expectErrorResponse = await datastore.getNoteById(id);
       if ('ok' in expectErrorResponse) {
-        const memoId = expectErrorResponse.ok.id;
+        const noteId = expectErrorResponse.ok.id;
         throw new Error(
-          `Memo (ID: ${memoId}) still exits on this database canister.`
+          `Note (ID: ${noteId}) still exits on this database canister.`
         );
       } else {
         expect(expectErrorResponse.err).toBe(
-          `A memo does not exist for ID: ${id}`
+          `A note does not exist for ID: ${id}`
         );
       }
     } else {
@@ -181,9 +181,9 @@ describe('CRUD tests', () => {
     }
   });
 
-  it('should check a canister ID can be accessed by using a memo ID (1).', async () => {
-    const { id, canisterId } = returnedMemo1;
-    const response = await actorOfAlice.getCanisterIdByMemoId(id);
+  it('should check a canister ID can be accessed by using a note ID (1).', async () => {
+    const { id, canisterId } = returnedNote1;
+    const response = await actorOfAlice.getCanisterIdByNoteId(id);
     if ('ok' in response) {
       expect(response.ok).toEqual(canisterId);
     } else {
@@ -191,9 +191,9 @@ describe('CRUD tests', () => {
     }
   });
 
-  it('should check a canister ID can be accessed by using a memo ID (2).', async () => {
-    const { id, canisterId } = returnedMemo2;
-    const response = await actorOfAlice.getCanisterIdByMemoId(id);
+  it('should check a canister ID can be accessed by using a note ID (2).', async () => {
+    const { id, canisterId } = returnedNote2;
+    const response = await actorOfAlice.getCanisterIdByNoteId(id);
     if ('ok' in response) {
       expect(response.ok).toEqual(canisterId);
     } else {
@@ -203,25 +203,25 @@ describe('CRUD tests', () => {
 });
 
 describe('User authentication tests', () => {
-  let memoOfAlice: DefiniteMemo;
+  let noteOfAlice: DefiniteNote;
 
-  const memo = {
-    title: 'First test memo',
+  const note = {
+    title: 'First test note',
     tags: ['tagA', 'tagB'],
-    content: 'This is a test memo',
+    content: 'This is a test note',
   };
 
   beforeAll(async () => {
     const response = await actorOfAlice.datastoreCanisterIds();
     if ('ok' in response) {
       const canisterIds = response.ok;
-      const memosOnCanisters = await Promise.all(
+      const notesOnCanisters = await Promise.all(
         canisterIds.map(async (canisterId: Principal) => {
           const datastore = datastoreActor(canisterId)(identityOptionOfAlice);
-          return await datastore.getAllMemos();
+          return await datastore.getAllNotes();
         })
       );
-      const memos = memosOnCanisters
+      const notes = notesOnCanisters
         .reduce((acc, v) => acc.concat(v), [])
         .sort((a, b) => {
           if (a.createdAt < b.createdAt) {
@@ -231,55 +231,55 @@ describe('User authentication tests', () => {
           }
           return 0;
         });
-      memoOfAlice = memos[0];
+      noteOfAlice = notes[0];
     } else {
       throw new Error(response.err);
     }
   });
 
-  it("should check Bob cannot read Alice's memo.", async () => {
-    const { id, canisterId } = memoOfAlice;
+  it("should check Bob cannot read Alice's note.", async () => {
+    const { id, canisterId } = noteOfAlice;
     const datastore = datastoreActor(canisterId)(identityOptionOfBob);
-    const response = await datastore.getMemoById(id);
+    const response = await datastore.getNoteById(id);
     if ('ok' in response) {
-      throw new Error(`Bob should not read this memo (ID: ${id})`);
+      throw new Error(`Bob should not read this note (ID: ${id})`);
     } else {
       expect(response.err).toBe('You are not authenticated.');
     }
   });
 
-  it("should check Bob cannot update Alice's memo", async () => {
-    const { id, canisterId } = memoOfAlice;
+  it("should check Bob cannot update Alice's note", async () => {
+    const { id, canisterId } = noteOfAlice;
     const datastore = datastoreActor(canisterId)(identityOptionOfBob);
-    const response = await datastore.updateMemo(
+    const response = await datastore.updateNote(
       id,
       ['Hello this is Bob.'],
       [],
       []
     );
     if ('ok' in response) {
-      throw new Error(`Bob should not update this memo (ID: ${id})`);
+      throw new Error(`Bob should not update this note (ID: ${id})`);
     } else {
       expect(response.err).toBe('You are not authenticated.');
     }
   });
 
-  it("should check Bob cannot delete Alice's memo", async () => {
-    const { id, canisterId } = memoOfAlice;
+  it("should check Bob cannot delete Alice's note", async () => {
+    const { id, canisterId } = noteOfAlice;
     const datastore = datastoreActor(canisterId)(identityOptionOfBob);
-    const response = await datastore.deleteMemo(id);
+    const response = await datastore.deleteNote(id);
     if ('ok' in response) {
-      throw new Error(`Bob should not update this memo (ID: ${id})`);
+      throw new Error(`Bob should not update this note (ID: ${id})`);
     } else {
       expect(response.err).toBe('You are not authenticated.');
     }
   });
 
-  it('should check Bob cannot create his memo because he is not registered.', async () => {
-    const { title, tags, content } = memo;
-    const response = await actorOfBob.createMemo(title, tags, content);
+  it('should check Bob cannot create his note because he is not registered.', async () => {
+    const { title, tags, content } = note;
+    const response = await actorOfBob.createNote(title, tags, content);
     if ('ok' in response) {
-      throw new Error(`Bob should not create his memo.`);
+      throw new Error(`Bob should not create his note.`);
     } else {
       expect(response.err).toBe('You are not registered.');
     }
@@ -294,11 +294,11 @@ describe('User authentication tests', () => {
     }
   });
 
-  it('should check Alice cannot create her memo by directly calling a secondary canister.', async () => {
-    const { userId, canisterId } = memoOfAlice;
-    const { title, tags, content } = memo;
+  it('should check Alice cannot create her note by directly calling a secondary canister.', async () => {
+    const { userId, canisterId } = noteOfAlice;
+    const { title, tags, content } = note;
     const datastore = datastoreActor(canisterId)(identityOptionOfAlice);
-    const response = await datastore.createMemo(
+    const response = await datastore.createNote(
       userId,
       canisterId,
       BigInt(1),
@@ -307,10 +307,10 @@ describe('User authentication tests', () => {
       content
     );
     if ('ok' in response) {
-      throw new Error(`Alice should not create her memo.`);
+      throw new Error(`Alice should not create her note.`);
     } else {
       expect(response.err).toBe(
-        'You can only create a memo by calling the main canister.'
+        'You can only create a note by calling the main canister.'
       );
     }
   });
