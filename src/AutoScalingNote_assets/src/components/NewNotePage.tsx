@@ -8,6 +8,7 @@ import {
   Textarea,
   Spacer,
   Center,
+  useToast,
 } from '@chakra-ui/react';
 
 import { useAuthentication } from '../hooks/useAuthentication';
@@ -17,6 +18,7 @@ import { Button } from './Button';
 export const NewNotePage = () => {
   const { getMainActor } = useAuthentication();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState('');
@@ -28,10 +30,20 @@ export const NewNotePage = () => {
 
     const res = await getMainActor().createNote(title, tags, content);
     if ('ok' in res) {
-      console.log(res.ok);
+      toast({
+        description: "We've saved your note.",
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
       navigate('/');
     } else {
-      console.log(res.err);
+      toast({
+        description: `${res.err}`,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
     setIsLoading(false);
   };

@@ -3,7 +3,7 @@ import { atom, useRecoilState } from 'recoil';
 import { AuthClient } from '@dfinity/auth-client';
 import { Identity } from '@dfinity/agent';
 import { Principal } from '@dfinity/principal';
-
+import { useToast } from '@chakra-ui/react';
 import {
   canisterId as autoScalingNoteCanisterId,
   idlFactory as idlFactoryAutoScalingNote,
@@ -36,6 +36,7 @@ const autoScalingNoteActor = curriedCreateActor<IAutoScalingNote>(
 
 export function useAuthentication() {
   const [user, setUser] = useRecoilState(userState);
+  const toast = useToast();
 
   const logout = () => {
     setUser({ isLogin: false });
@@ -72,6 +73,10 @@ export function useAuthentication() {
   };
 
   const isAuth = async () => {
+    if (user?.isLogin) {
+      return;
+    }
+
     const authClient = await AuthClient.create();
     const identity = await authClient.getIdentity();
     const isAnonymous = identity.getPrincipal().isAnonymous();
@@ -83,14 +88,18 @@ export function useAuthentication() {
   const getUser = async (identity: Identity) => {
     const actor = autoScalingNoteActor({ agentOptions: { identity } });
     const isRegistered = await actor.isRegistered();
-    let res = isRegistered ? await actor.userId() : await actor.register();
 
-    let userId: Principal;
+    const res = isRegistered ? await actor.userId() : await actor.register();
+
     if ('ok' in res) {
-      userId = res.ok;
       setUser((prev) => ({ ...prev, identity, isLogin: true }));
     } else {
-      throw new Error(res.err);
+      toast({
+        description: `${res.err}`,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 

@@ -10,7 +10,7 @@ export const PrivateRoute = () => {
     <Outlet />
   ) : (
     <Layout>
-      <p>You are not logged in.</p>
+      <p></p>
     </Layout>
   );
 };

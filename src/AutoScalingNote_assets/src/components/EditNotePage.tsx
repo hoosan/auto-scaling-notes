@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Box, VStack, Flex, Input, Textarea, Spacer } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  VStack,
+  Flex,
+  Input,
+  Textarea,
+  Spacer,
+  useToast,
+} from '@chakra-ui/react';
 import { Principal } from '@dfinity/principal';
 import { NoteId } from '../../../declarations/Datastore/Datastore.did';
 
@@ -15,6 +23,7 @@ export interface Props {
 export const EditNotePage: React.VFC<Props> = ({ noteId }) => {
   const { isLogin, getMainActor, getDatastoreActor } = useAuthentication();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const [isLoading, setIsLoading] = useState(false);
   const [canisterId, setCanisterId] = useState<Principal>();
@@ -41,13 +50,23 @@ export const EditNotePage: React.VFC<Props> = ({ noteId }) => {
       )
       .then((res) => {
         if ('ok' in res) {
-          navigate('/');
+          toast({
+            description: "We've saved your note.",
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+          });
         } else {
           throw new Error('Failed to update a note.');
         }
       })
       .catch((err: Error) => {
-        alert(err);
+        toast({
+          description: `${err}`,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
       });
     setIsLoading(false);
   };
@@ -82,7 +101,12 @@ export const EditNotePage: React.VFC<Props> = ({ noteId }) => {
         }
       })
       .catch((err: Error) => {
-        alert(err);
+        toast({
+          description: `${err}`,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
         navigate('/');
       });
     setIsLoading(false);
