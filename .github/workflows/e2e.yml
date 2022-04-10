@@ -1,0 +1,57 @@
+name: E2E tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      VESSEL_VERSION: 0.6.2
+      DFX_VERSION: 0.9.2
+      NODE_VERSION: 16
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - run: npm install -g npm
+
+      - run: echo y | DFX_VERSION=${{ env.DFX_VERSION }} sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"
+
+      - name: Install vessel
+        run: |
+          set -x
+          curl --location --output vessel-linux64 "https://github.com/dfinity/vessel/releases/download/v${{ env.VESSEL_VERSION }}/vessel-linux64"
+          mkdir $HOME/bin
+          mv ./vessel-linux64 $HOME/bin/vessel
+          chown -R "$(whoami)" $HOME/bin && chmod -R +x $HOME/bin
+          echo "$HOME/bin" >> $GITHUB_PATH
+
+      - name: Show versions
+        run: |
+          dfx --version
+          vessel --version
+
+      - name: Install npm packages
+        :run: |
+          npm install
+
+      - name: Local deploy
+        run: |
+          dfx start --background
+          sh ./install_local.sh
+
+      - name: Run e2e tests
+        run: |
+          npm run test
+
+      - name: Stop dfx
+        run: |
+          dfx stop
