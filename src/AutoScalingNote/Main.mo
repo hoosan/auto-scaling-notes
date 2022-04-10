@@ -12,22 +12,35 @@ import ICType "./IC";
 import Types "./Types";
 import Datastore "./Datastore";
 
-shared ({ caller }) actor class Self(_dataSize: Types.Byte) {
+shared ({ caller }) actor class Self() {
 
   type UserId = Types.UserId;
   type NoteId = Types.NoteId;
   type User = Types.User;
-
   type DatastoreCanisterId = Types.DatastoreCanisterId;
   type Byte = Types.Byte;
   type Note = Types.Note;
   type DefiniteNote = Types.DefiniteNote;
   
-  let IC : ICType.Self = actor "aaaaa-aa";
-  let _capacity : Byte = 4_000_000_000;
-  let _numberOfDataPerCanister : Nat = _capacity / _dataSize;
+  // Bind the caller and the admin
   let _admin : Principal = caller;
-  
+
+  // The IC management canister.
+  // See https://smartcontracts.org/docs/interface-spec/index.html#ic-management-canister
+  let IC : ICType.Self = actor "aaaaa-aa";
+
+  // Currently, a single canister smart contract is limited to 4 GB of storage due to WebAssembly limitations.
+  // To ensure that our datastore canister does not exceed this limit, we restrict memory usage to at most 2 GB because 
+  // up to 2x memory may be needed for data serialization during canister upgrades. 
+  let DATASTORE_CANISTER_CAPACITY : Byte = 2_000_000_000;
+
+  // Size limit of each note is 10 MB.
+  let NOTE_DATA_SIZE = 10_000_000;
+
+  // Number of data on single datastore canister can be calculated as:
+  // DATASTORE_CANISTER_CAPACITY / NOTE_DATA_SIZE
+  let _numberOfDataPerCanister : Nat = DATASTORE_CANISTER_CAPACITY / NOTE_DATA_SIZE;
+
   stable var _count = 0;
   stable var _currentDatastoreCanisterId : ?DatastoreCanisterId = null;
   stable var _stableUsers : [(UserId, User)] = [];
@@ -146,7 +159,7 @@ shared ({ caller }) actor class Self(_dataSize: Types.Byte) {
   private func _generateDataStoreCanister(): async Result.Result<DatastoreCanisterId,Text>{
     try {
       Cycles.add(4_000_000_000_000);
-      let noteStoreCanister = await Datastore.Self(_dataSize);
+      let noteStoreCanister = await Datastore.Self(NOTE_DATA_SIZE);
       let canisterId = Principal.fromActor(noteStoreCanister);
 
       _currentDatastoreCanisterId := ?canisterId;

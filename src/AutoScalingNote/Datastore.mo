@@ -15,7 +15,7 @@ import Principal "mo:base/Principal";
 import Types "./Types";
 import Note "./Note";
 
-shared ({ caller }) actor class Self(_dataSize: Types.Byte): async Types.Datastore {
+shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Datastore {
 
   type UserId = Types.UserId;
   type NoteId = Types.NoteId;
