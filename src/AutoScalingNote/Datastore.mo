@@ -28,9 +28,9 @@ shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Dat
   let _main : Principal = caller;
   let _datastores = HashMap.fromIter<NoteId, Note>(_stableDatastores.vals(), 10, Nat.equal, Hash.hash);
   
-  public shared ({ caller }) func createNote(userId: UserId, canisterId: Principal, noteId: NoteId, title: Text, tags: [Text], content: Text) : async Result.Result<DefiniteNote,Text> {
+  public shared ({ caller }) func createNote(userId: UserId, canisterId: Principal, noteId: NoteId, title: Text, content: Text) : async Result.Result<DefiniteNote,Text> {
     if (_main != caller) { return #err "You can only create a note by calling the main canister." };
-    let note = Note.create(noteId, canisterId, userId, title, tags, content);
+    let note = Note.create(noteId, canisterId, userId, title, content);
     _datastores.put(noteId, note);
     #ok (Note.freeze(note))
   };
@@ -58,14 +58,14 @@ shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Dat
     Iter.toArray(notes.vals())
   };
 
-  public shared ({ caller }) func updateNote(noteId: NoteId, title: ?Text, tags: ?[Text], content: ?Text) : async Result.Result<DefiniteNote, Text> {
+  public shared ({ caller }) func updateNote(noteId: NoteId, title: ?Text, content: ?Text) : async Result.Result<DefiniteNote, Text> {
     switch (_datastores.get(noteId)) {
       case null {
         #err ("A note does not exist for ID: " # Nat.toText(noteId))
       };
       case (?note_){
         if (not _isAuthenticated(note_, caller)) { return #err "You are not authenticated." };
-        let updatedNote = Note.update(note_, title, tags, content);
+        let updatedNote = Note.update(note_, title, content);
         _datastores.put(noteId, updatedNote);
         #ok (Note.freeze(updatedNote))
       };

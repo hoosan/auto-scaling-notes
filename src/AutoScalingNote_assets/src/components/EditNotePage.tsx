@@ -28,7 +28,6 @@ export const EditNotePage: React.VFC<Props> = ({ noteId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [canisterId, setCanisterId] = useState<Principal>();
   const [title, setTitle] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
   const [content, setContent] = useState('');
 
   const handleClick = async () => {
@@ -42,12 +41,7 @@ export const EditNotePage: React.VFC<Props> = ({ noteId }) => {
     const datastore = getDatastoreActor(canisterId);
 
     await datastore
-      .updateNote(
-        noteId,
-        [title || 'Untitled Note'],
-        [tags],
-        [content || '...']
-      )
+      .updateNote(noteId, [title || 'Untitled Note'], [content || '...'])
       .then((res) => {
         if ('ok' in res) {
           toast({
@@ -92,9 +86,8 @@ export const EditNotePage: React.VFC<Props> = ({ noteId }) => {
       })
       .then((res) => {
         if ('ok' in res) {
-          const { title, tags, content } = res.ok;
+          const { title, content } = res.ok;
           setTitle(title);
-          setTags(tags);
           setContent(content);
         } else {
           throw new Error(res.err);

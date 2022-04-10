@@ -73,13 +73,11 @@ describe('User registration tests', () => {
 describe('CRUD tests', () => {
   const firstNote = {
     title: 'First test note',
-    tags: ['tagA', 'tagB'],
     content: 'This is a test note',
   };
 
   const secondNote = {
     title: 'Second test note',
-    tags: ['tagC', 'tagD'],
     content: 'This is a second test note',
   };
 
@@ -89,12 +87,11 @@ describe('CRUD tests', () => {
   let returnedNote2: DefiniteNote;
 
   it('should check that Alice can create her fist note.', async () => {
-    const { title, tags, content } = firstNote;
-    const response = await actorOfAlice.createNote(title, tags, content);
+    const { title, content } = firstNote;
+    const response = await actorOfAlice.createNote(title, content);
     if ('ok' in response) {
       returnedNote1 = response.ok;
       expect(returnedNote1.title).toBe(title);
-      expect(returnedNote1.tags).toEqual(tags);
       expect(returnedNote1.content).toBe(content);
     } else {
       throw new Error(response.err);
@@ -102,12 +99,11 @@ describe('CRUD tests', () => {
   });
 
   it('should check that Alice can create her second note.', async () => {
-    const { title, tags, content } = secondNote;
-    const response = await actorOfAlice.createNote(title, tags, content);
+    const { title, content } = secondNote;
+    const response = await actorOfAlice.createNote(title, content);
     if ('ok' in response) {
       returnedNote2 = response.ok;
       expect(returnedNote2.title).toBe(title);
-      expect(returnedNote2.tags).toEqual(tags);
       expect(returnedNote2.content).toBe(content);
     } else {
       throw new Error(response.err);
@@ -115,7 +111,7 @@ describe('CRUD tests', () => {
   });
 
   it('should check that Alice can get her notes.', async () => {
-    const { title, tags, content } = secondNote;
+    const { title, content } = secondNote;
 
     const response = await actorOfAlice.datastoreCanisterIds();
     if ('ok' in response) {
@@ -138,7 +134,6 @@ describe('CRUD tests', () => {
         });
       const note = notes[0];
       expect(note.title).toBe(title);
-      expect(note.tags).toEqual(tags);
       expect(note.content).toBe(content);
     } else {
       throw new Error(response.err);
@@ -150,7 +145,7 @@ describe('CRUD tests', () => {
     const newTitie = 'This is updated title.';
     const { id, canisterId } = noteToUpdate;
     const datastore = datastoreActor(canisterId)(identityOptionOfAlice);
-    const response = await datastore.updateNote(id, [newTitie], [], []);
+    const response = await datastore.updateNote(id, [newTitie], []);
     if ('ok' in response) {
       const updatedNote = response.ok;
       expect(updatedNote.title).toBe(newTitie);
@@ -207,7 +202,6 @@ describe('User authentication tests', () => {
 
   const note = {
     title: 'First test note',
-    tags: ['tagA', 'tagB'],
     content: 'This is a test note',
   };
 
@@ -251,12 +245,7 @@ describe('User authentication tests', () => {
   it("should check Bob cannot update Alice's note", async () => {
     const { id, canisterId } = noteOfAlice;
     const datastore = datastoreActor(canisterId)(identityOptionOfBob);
-    const response = await datastore.updateNote(
-      id,
-      ['Hello this is Bob.'],
-      [],
-      []
-    );
+    const response = await datastore.updateNote(id, ['Hello this is Bob.'], []);
     if ('ok' in response) {
       throw new Error(`Bob should not update this note (ID: ${id})`);
     } else {
@@ -276,8 +265,8 @@ describe('User authentication tests', () => {
   });
 
   it('should check Bob cannot create his note because he is not registered.', async () => {
-    const { title, tags, content } = note;
-    const response = await actorOfBob.createNote(title, tags, content);
+    const { title, content } = note;
+    const response = await actorOfBob.createNote(title, content);
     if ('ok' in response) {
       throw new Error(`Bob should not create his note.`);
     } else {
@@ -296,14 +285,13 @@ describe('User authentication tests', () => {
 
   it('should check Alice cannot create her note by directly calling a secondary canister.', async () => {
     const { userId, canisterId } = noteOfAlice;
-    const { title, tags, content } = note;
+    const { title, content } = note;
     const datastore = datastoreActor(canisterId)(identityOptionOfAlice);
     const response = await datastore.createNote(
       userId,
       canisterId,
       BigInt(1),
       title,
-      tags,
       content
     );
     if ('ok' in response) {

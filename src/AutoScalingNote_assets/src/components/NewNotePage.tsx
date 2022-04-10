@@ -22,13 +22,12 @@ export const NewNotePage = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState('');
-  const [tags, setTags] = useState([]);
   const [content, setContent] = useState('');
 
   const handleClick = async () => {
     setIsLoading(true);
 
-    const res = await getMainActor().createNote(title, tags, content);
+    const res = await getMainActor().createNote(title, content);
     if ('ok' in res) {
       toast({
         description: "We've saved your note.",

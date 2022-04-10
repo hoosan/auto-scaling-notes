@@ -1,5 +1,4 @@
 import type { Principal } from '@dfinity/principal';
-export type Byte = bigint;
 export type DatastoreCanisterId = Principal;
 export type DatastoreCanisterId__1 = Principal;
 export interface DefiniteNote {
@@ -8,7 +7,6 @@ export interface DefiniteNote {
   'content' : string,
   'userId' : UserId__1,
   'createdAt' : bigint,
-  'tags' : Array<string>,
   'updatedAt' : bigint,
   'canisterId' : DatastoreCanisterId__1,
 }
@@ -25,11 +23,7 @@ export type Result_3 = { 'ok' : DefiniteNote } |
 export interface Self {
   'balance' : () => Promise<bigint>,
   'count' : () => Promise<bigint>,
-  'createNote' : (
-      arg_0: string,
-      arg_1: Array<string>,
-      arg_2: string,
-    ) => Promise<Result_3>,
+  'createNote' : (arg_0: string, arg_1: string) => Promise<Result_3>,
   'currentDatastoreCanisterId' : () => Promise<Result_1>,
   'datastoreCanisterIds' : () => Promise<Result_2>,
   'getCanisterIdByNoteId' : (arg_0: NoteId) => Promise<Result_1>,

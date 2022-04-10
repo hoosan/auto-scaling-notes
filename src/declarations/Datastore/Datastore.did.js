@@ -11,7 +11,6 @@ export const idlFactory = ({ IDL }) => {
     'content' : IDL.Text,
     'userId' : UserId,
     'createdAt' : IDL.Int,
-    'tags' : IDL.Vec(IDL.Text),
     'updatedAt' : IDL.Int,
     'canisterId' : DatastoreCanisterId,
   });
@@ -19,14 +18,7 @@ export const idlFactory = ({ IDL }) => {
   const Result_1 = IDL.Variant({ 'ok' : NoteId, 'err' : IDL.Text });
   const Self = IDL.Service({
     'createNote' : IDL.Func(
-        [
-          UserId__1,
-          IDL.Principal,
-          NoteId,
-          IDL.Text,
-          IDL.Vec(IDL.Text),
-          IDL.Text,
-        ],
+        [UserId__1, IDL.Principal, NoteId, IDL.Text, IDL.Text],
         [Result],
         [],
       ),
@@ -34,12 +26,7 @@ export const idlFactory = ({ IDL }) => {
     'getAllNotes' : IDL.Func([], [IDL.Vec(DefiniteNote)], ['query']),
     'getNoteById' : IDL.Func([NoteId], [Result], ['query']),
     'updateNote' : IDL.Func(
-        [
-          NoteId,
-          IDL.Opt(IDL.Text),
-          IDL.Opt(IDL.Vec(IDL.Text)),
-          IDL.Opt(IDL.Text),
-        ],
+        [NoteId, IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
         [Result],
         [],
       ),

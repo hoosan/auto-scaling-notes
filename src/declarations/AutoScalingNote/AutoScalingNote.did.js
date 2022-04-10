@@ -1,5 +1,4 @@
 export const idlFactory = ({ IDL }) => {
-  const Byte = IDL.Nat;
   const NoteId__1 = IDL.Nat;
   const UserId__1 = IDL.Principal;
   const DatastoreCanisterId__1 = IDL.Principal;
@@ -9,7 +8,6 @@ export const idlFactory = ({ IDL }) => {
     'content' : IDL.Text,
     'userId' : UserId__1,
     'createdAt' : IDL.Int,
-    'tags' : IDL.Vec(IDL.Text),
     'updatedAt' : IDL.Int,
     'canisterId' : DatastoreCanisterId__1,
   });
@@ -29,11 +27,7 @@ export const idlFactory = ({ IDL }) => {
   const Self = IDL.Service({
     'balance' : IDL.Func([], [IDL.Nat], ['query']),
     'count' : IDL.Func([], [IDL.Nat], ['query']),
-    'createNote' : IDL.Func(
-        [IDL.Text, IDL.Vec(IDL.Text), IDL.Text],
-        [Result_3],
-        [],
-      ),
+    'createNote' : IDL.Func([IDL.Text, IDL.Text], [Result_3], []),
     'currentDatastoreCanisterId' : IDL.Func([], [Result_1], ['query']),
     'datastoreCanisterIds' : IDL.Func([], [Result_2], ['query']),
     'getCanisterIdByNoteId' : IDL.Func([NoteId], [Result_1], ['query']),
@@ -45,7 +39,4 @@ export const idlFactory = ({ IDL }) => {
   });
   return Self;
 };
-export const init = ({ IDL }) => {
-  const Byte = IDL.Nat;
-  return [Byte];
-};
+export const init = ({ IDL }) => { return []; };

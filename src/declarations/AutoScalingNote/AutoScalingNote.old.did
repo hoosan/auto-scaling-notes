@@ -35,7 +35,6 @@ type DefiniteNote =
  };
 type DatastoreCanisterId__1 = principal;
 type DatastoreCanisterId = principal;
-type Byte = nat;
 service : {
   balance: () -> (nat) query;
   count: () -> (nat) query;

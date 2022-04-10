@@ -2,12 +2,11 @@ type UserId__1 = principal;
 type UserId = principal;
 type Self = 
  service {
-   createNote: (UserId__1, principal, NoteId, text, vec text, text) ->
-    (Result);
+   createNote: (UserId__1, principal, NoteId, text, text) -> (Result);
    deleteNote: (NoteId) -> (Result_1);
    getAllNotes: () -> (vec DefiniteNote) query;
    getNoteById: (NoteId) -> (Result) query;
-   updateNote: (NoteId, opt text, opt vec text, opt text) -> (Result);
+   updateNote: (NoteId, opt text, opt text) -> (Result);
  };
 type Result_1 = 
  variant {
@@ -27,7 +26,6 @@ type DefiniteNote =
    content: text;
    createdAt: int;
    id: NoteId__1;
-   tags: vec text;
    title: text;
    updatedAt: int;
    userId: UserId;

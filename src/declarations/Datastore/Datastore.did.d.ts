@@ -7,7 +7,6 @@ export interface DefiniteNote {
   'content' : string,
   'userId' : UserId,
   'createdAt' : bigint,
-  'tags' : Array<string>,
   'updatedAt' : bigint,
   'canisterId' : DatastoreCanisterId,
 }
@@ -23,8 +22,7 @@ export interface Self {
       arg_1: Principal,
       arg_2: NoteId,
       arg_3: string,
-      arg_4: Array<string>,
-      arg_5: string,
+      arg_4: string,
     ) => Promise<Result>,
   'deleteNote' : (arg_0: NoteId) => Promise<Result_1>,
   'getAllNotes' : () => Promise<Array<DefiniteNote>>,
@@ -32,8 +30,7 @@ export interface Self {
   'updateNote' : (
       arg_0: NoteId,
       arg_1: [] | [string],
-      arg_2: [] | [Array<string>],
-      arg_3: [] | [string],
+      arg_2: [] | [string],
     ) => Promise<Result>,
 }
 export type UserId = Principal;

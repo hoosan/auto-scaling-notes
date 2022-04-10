@@ -21,7 +21,6 @@ module {
     canisterId: DatastoreCanisterId;
     userId: UserId;
     var title: Text;
-    var tags: [Text];
     var content: Text;
     createdAt: Int;
     var updatedAt: Int;
@@ -32,7 +31,6 @@ module {
     canisterId: DatastoreCanisterId;
     userId: UserId;
     title: Text;
-    tags: [Text];
     content: Text;
     createdAt: Int;
     updatedAt: Int;
@@ -44,14 +42,12 @@ module {
       canisterId: Principal,
       noteId: NoteId,
       title: Text,
-      tags: [Text],
       content: Text
     ) -> async { #ok : DefiniteNote; #err : Text; };
     getAllNotes : shared query () -> async [DefiniteNote];
     updateNote : shared (
       noteId: NoteId,
       title: ?Text,
-      tags: ?[Text],
       content: ?Text
     ) -> async { #ok : DefiniteNote; #err : Text; };
     deleteNote : shared (noteId: NoteId) -> async { #ok : NoteId; #err : Text };

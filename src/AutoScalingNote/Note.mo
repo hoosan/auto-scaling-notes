@@ -9,13 +9,12 @@ module {
   type Note = Types.Note;
   type DefiniteNote = Types.DefiniteNote;
 
-  public func create(id: NoteId, canisterId: Principal, userId: UserId, title: Text, tags: [Text], content: Text): Note {
+  public func create(id: NoteId, canisterId: Principal, userId: UserId, title: Text, content: Text): Note {
     let note : Note = {
       id = id;
       userId = userId;
       canisterId = canisterId;
       var title = title;
-      var tags = tags;
       var content = content;
       createdAt = Time.now();
       var updatedAt = Time.now();
@@ -29,7 +28,6 @@ module {
       userId = note.userId;
       canisterId = note.canisterId;
       title = note.title;
-      tags = note.tags;
       content = note.content;
       createdAt = note.createdAt;
       updatedAt = note.updatedAt;
@@ -37,14 +35,10 @@ module {
     definiteNote
   };
 
-  public func update(note: Note, title: ?Text, tags: ?[Text], content: ?Text) : Note {
+  public func update(note: Note, title: ?Text, content: ?Text) : Note {
     switch title {
       case null {};
       case (?title_) { note.title := title_ };
-    };
-    switch tags {
-      case null {};
-      case (?tags_) { note.tags := tags_ };
     };
     switch content {
       case null {};

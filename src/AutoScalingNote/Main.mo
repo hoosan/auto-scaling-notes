@@ -114,7 +114,7 @@ shared ({ caller }) actor class Self() {
     }
   };
 
-  public shared ({ caller }) func createNote(title: Text, tags: [Text], content: Text) : async Result.Result<DefiniteNote, Text> {
+  public shared ({ caller }) func createNote(title: Text, content: Text) : async Result.Result<DefiniteNote, Text> {
     if (not (_isUserRegistered caller)) { return #err "You are not registered." };
 
     // Check the current datastore has reached its limit.
@@ -135,7 +135,7 @@ shared ({ caller }) actor class Self() {
       case null { #err "A datastore canister is currently null." };
       case (?canisterId_){
         let dataStoreCanister = _getDatastoreCanister(canisterId_);
-        await dataStoreCanister.createNote(caller, canisterId_, noteId, title, tags, content);
+        await dataStoreCanister.createNote(caller, canisterId_, noteId, title, content);
       }
     }
 
