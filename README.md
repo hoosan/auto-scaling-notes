@@ -74,9 +74,9 @@ dfx canister id internet_identity
 http://rkp4c-7iaaa-aaaaa-aaaca-cai.localhost:8000/
 ```
 
-(iv) Replace `rkp4c-7iaaa-aaaaa-aaaca-cai` with the canister ID of your local II canister in (ii).
+Replace `rkp4c-7iaaa-aaaaa-aaaca-cai` with the canister ID of your local II canister in (ii).
 
-(v) Copy the canister ID of the local II canister and paste it into webpack.config.cjs in this project on the LOCAL_II_CANISTER variable on line 13.
+(iv) Copy the canister ID of the local II canister and paste it into webpack.config.cjs in this project on the LOCAL_II_CANISTER variable on line 13.
 
 5. Deploy the canisters locally:
 
@@ -93,7 +93,7 @@ npm run start
 # E2E testing
 
 This project demonstrates how one can write e2e tests.
-The tests are implemented in `***.test.ts` with the jest library.
+The tests are implemented in `auto_scaling_note.test.ts` with the jest library.
 
 One can run tests locally via:
 
