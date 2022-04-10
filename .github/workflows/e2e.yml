@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       VESSEL_VERSION: 0.6.2
       DFX_VERSION: 0.9.2

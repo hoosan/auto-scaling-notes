@@ -1,0 +1,9 @@
+type DatastoreCanisterId/1 = DatastoreCanisterId;
+type User/1 = User;
+type UserId/3 = UserId;
+actor {
+  stable var _count : Nat;
+  stable var _currentDatastoreCanisterId : ?DatastoreCanisterId/1;
+  stable var _stableDatastoreCanisterIds : [DatastoreCanisterId/1];
+  stable var _stableUsers : [(UserId/3, User/1)]
+};
