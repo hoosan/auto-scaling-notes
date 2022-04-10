@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Principal } from '@dfinity/principal';
-import { Box, List, ListItem } from '@chakra-ui/react';
+import { Box, List, ListItem, Center } from '@chakra-ui/react';
 
 import { DefiniteNote } from '../../../declarations/Datastore/Datastore.did';
 
@@ -48,30 +48,40 @@ export const NoteList = () => {
   }, [isLogin]);
 
   return (
-    <Box bg='white' mx='10px' borderRadius='lg' mt='20px' py='4px'>
-      <List>
-        {notes.map((note, index) => {
-          const { id, title, updatedAt, content } = note;
-          const props =
-            index == notes.length - 1
-              ? {}
-              : {
-                  borderBottom: '2px',
-                  borderColor: '#EAF0F6',
-                };
-          return (
-            <ListItem key={index} {...props}>
-              <Link to={`/note/${Number(id)}`}>
-                <NoteCard
-                  title={title}
-                  updatedAt={updatedAt}
-                  content={content}
-                />
-              </Link>
-            </ListItem>
-          );
-        })}
-      </List>
-    </Box>
+    <Center>
+      <Box
+        bg='white'
+        mx='10px'
+        borderRadius='lg'
+        mt='20px'
+        py='4px'
+        w='full'
+        maxW='3xl'
+      >
+        <List>
+          {notes.map((note, index) => {
+            const { id, title, updatedAt, content } = note;
+            const props =
+              index == notes.length - 1
+                ? {}
+                : {
+                    borderBottom: '2px',
+                    borderColor: '#EAF0F6',
+                  };
+            return (
+              <ListItem key={index} {...props}>
+                <Link to={`/note/${Number(id)}`}>
+                  <NoteCard
+                    title={title}
+                    updatedAt={updatedAt}
+                    content={content}
+                  />
+                </Link>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Box>
+    </Center>
   );
 };
