@@ -30,6 +30,7 @@ shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Dat
   
   public shared ({ caller }) func createNote(userId: UserId, canisterId: Principal, noteId: NoteId, title: Text, content: Text) : async Result.Result<DefiniteNote,Text> {
     if (_main != caller) { return #err "You can only create a note by calling the main canister." };
+    if (_isLimit (title # content)) { return #err "The data size exceeded the limit."};
     let note = Note.create(noteId, canisterId, userId, title, content);
     _datastores.put(noteId, note);
     #ok (Note.freeze(note))
@@ -65,6 +66,8 @@ shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Dat
       };
       case (?note_){
         if (not _isAuthenticated(note_, caller)) { return #err "You are not authenticated." };
+        if (_hasUpdateReachedLimit(note_, title, content)) { return #err "The data size exceeded the limit." };   
+
         let updatedNote = Note.update(note_, title, content);
         _datastores.put(noteId, updatedNote);
         #ok (Note.freeze(updatedNote))
@@ -87,6 +90,27 @@ shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Dat
 
   private func _isAuthenticated(note: Note, userId: UserId) : Bool {
     note.userId == userId
+  };
+
+  private func _isLimit(t: Text) : Bool {
+    Text.encodeUtf8(t).size() > _noteDataSize
+  };
+
+  private func _hasUpdateReachedLimit(note: Note, title: ?Text, content: ?Text) : Bool {
+    switch(title, content){
+      case (?t, ?c){
+        _isLimit(t # c)
+      };
+      case (?t, null){
+        _isLimit(t # note.content)
+      };
+      case (null, ?c){
+        _isLimit(note.title # c)
+      };
+      case (null, null){
+        false
+      };
+    }
   };
 
   system func preupgrade() {

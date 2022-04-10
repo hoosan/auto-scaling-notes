@@ -195,6 +195,30 @@ describe('CRUD tests', () => {
       throw new Error(response.err);
     }
   });
+
+  it('should check Alice cannot create a note which exceeds the limit (1 MB).', async () => {
+    const title = 'Second test note';
+    const content = 'A'.repeat(1000001);
+    const response = await actorOfAlice.createNote(title, content);
+    if ('ok' in response) {
+      throw new Error('should get an error.');
+    } else {
+      expect(response.err).toBe('The data size exceeded the limit.');
+    }
+  });
+
+  it('should check Alice cannot update a note which exceeds the limit (1 MB).', async () => {
+    const noteToUpdate = notes[1];
+    const newContent = 'A'.repeat(1000001);
+    const { id, canisterId } = noteToUpdate;
+    const datastore = datastoreActor(canisterId)(identityOptionOfAlice);
+    const response = await datastore.updateNote(id, [], [newContent]);
+    if ('ok' in response) {
+      throw new Error('should get an error.');
+    } else {
+      expect(response.err).toBe('The data size exceeded the limit.');
+    }
+  });
 });
 
 describe('User authentication tests', () => {

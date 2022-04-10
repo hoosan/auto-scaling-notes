@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  VStack,
-  Flex,
-  Input,
-  Textarea,
-  Spacer,
-  useToast,
-} from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react';
 import { Principal } from '@dfinity/principal';
 import { NoteId } from '../../../declarations/Datastore/Datastore.did';
 
 import { useAuthentication } from '../hooks/useAuthentication';
-import { Button } from './Button';
+
 import { Layout } from './Layout';
+import { Editor } from './Editor';
 
 export interface Props {
   noteId: NoteId;
@@ -111,46 +104,14 @@ export const EditNotePage: React.VFC<Props> = ({ noteId }) => {
 
   return (
     <Layout>
-      <VStack
-        align='stretch'
-        bg='white'
-        mx='10px'
-        px='20px'
-        spacing='20px'
-        borderRadius='lg'
-        mt='20px'
-      >
-        <Spacer />
-        <Box>
-          <Input
-            disabled={isLoading}
-            value={title}
-            placeholder='Untitled Note'
-            size='lg'
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setTitle(e.target.value)
-            }
-          />
-        </Box>
-        <Box>
-          <Textarea
-            disabled={isLoading}
-            placeholder='...'
-            bg='#EAF0F6'
-            size='md'
-            rows={10}
-            value={content}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setContent(e.target.value)
-            }
-          />
-        </Box>
-        <Flex justifyContent='flex-end'>
-          <Spacer />
-          <Button onClick={handleClick} text='Save' />
-        </Flex>
-        <Spacer />
-      </VStack>
+      <Editor
+        isLoading={isLoading}
+        title={title}
+        content={content}
+        setTitle={setTitle}
+        setContent={setContent}
+        handleClick={handleClick}
+      />
     </Layout>
   );
 };

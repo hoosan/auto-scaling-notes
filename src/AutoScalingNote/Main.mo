@@ -34,8 +34,8 @@ shared ({ caller }) actor class Self() {
   // up to 2x memory may be needed for data serialization during canister upgrades. 
   let DATASTORE_CANISTER_CAPACITY : Byte = 2_000_000_000;
 
-  // Size limit of each note is 10 MB.
-  let NOTE_DATA_SIZE = 10_000_000;
+  // Size limit of each note is 1 MB.
+  let NOTE_DATA_SIZE = 1_000_000;
 
   // Number of data on single datastore canister can be calculated as:
   // DATASTORE_CANISTER_CAPACITY / NOTE_DATA_SIZE
