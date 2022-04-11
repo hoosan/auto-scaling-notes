@@ -37,10 +37,11 @@ shared ({ caller }) actor class Self() {
   // Size limit of each note is 1 MB.
   let NOTE_DATA_SIZE = 1_000_000;
 
-  // Number of data on single datastore canister can be calculated as:
+  // The number of notes on a single datastore canister can be calculated as:
   // DATASTORE_CANISTER_CAPACITY / NOTE_DATA_SIZE
   let _numberOfDataPerCanister : Nat = DATASTORE_CANISTER_CAPACITY / NOTE_DATA_SIZE;
 
+  // Stable variables
   stable var _count = 0;
   stable var _currentDatastoreCanisterId : ?DatastoreCanisterId = null;
   stable var _stableUsers : [(UserId, User)] = [];
@@ -52,22 +53,28 @@ shared ({ caller }) actor class Self() {
   var _datastoreCanisterIds = List.fromArray(_stableDatastoreCanisterIds);
   var _dataStoreCanister : ?Types.Datastore = null;
   
+  // Returns the current number of notes.
   public query func count() : async Nat {
     _count;
   };
 
+  // Returns the number of notes on a single datastore canister.
   public query func numberOfDataPerCanister() : async Nat {
     _numberOfDataPerCanister;
   };
 
+  // Returns the number of secondary (datastore) canisters
   public query func sizeOfDatastoreCanisterIds() : async Nat {
     List.size(_datastoreCanisterIds);
   };
 
+  // Returns the cycle balance. Useful for monitoring.
   public query func balance() : async Nat {
     Cycles.balance()
   };
 
+  // Returns a canister id of the current secondary (datastore) canister. 
+  // Traps if there is no secondary canister.
   public query ({ caller }) func currentDatastoreCanisterId(): async Result.Result<DatastoreCanisterId,Text> {
     switch _currentDatastoreCanisterId {
       case null { #err "A datastore canister is currently null." };
@@ -75,6 +82,11 @@ shared ({ caller }) actor class Self() {
     }
   };
 
+  // Returns a canister id of the canister containing a note of [noteId]
+  // Traps if:
+  //   - [caller] is not a registered user.
+  //   - [noteId] exceeds [_count].
+  //   - [index] exceeds the size of [_datastoreCanisterIds] list.
   public query ({ caller }) func getCanisterIdByNoteId(noteId: NoteId) : async Result.Result<DatastoreCanisterId, Text> {
     if (not (_isUserRegistered caller)) { return #err "You are not registered." };
     if (noteId >= _count) { return #err "Out of bounds error."};
@@ -85,6 +97,8 @@ shared ({ caller }) actor class Self() {
     }
   };
 
+  // Returns [user_.id].
+  // Traps if [caller] is not a registered user.
   public query ({ caller }) func userId(): async Result.Result<UserId,Text> {
     switch (_users.get(caller)) {
       case (?user_) { #ok (user_.id) };
@@ -92,11 +106,18 @@ shared ({ caller }) actor class Self() {
     }
   };
 
+  // Returns [_datastoreCanisterIds] as a array.
+  // Traps if [caller] is not a registered user.
   public query ({ caller }) func datastoreCanisterIds(): async Result.Result<[DatastoreCanisterId],Text> {
     if (not (_isUserRegistered caller)) { return #err "You are not registered." };
     #ok (List.toArray(_datastoreCanisterIds))
   };
 
+  // Register [caller] as a new user.
+  // Returns [caller] if the registration process successfully finishes.
+  // Traps if:
+  //   - [caller] is not a registered user.
+  //   - [caller] is the anonymous identity.
   public shared ({ caller }) func register(): async Result.Result<UserId,Text>{
     if (Principal.isAnonymous(caller)) { return #err "You need to be authenticated." };
     switch (_users.get(caller)) {
@@ -114,6 +135,12 @@ shared ({ caller }) actor class Self() {
     }
   };
 
+  // Creates a new note in the current datastore caller.
+  // Returns a created note.
+  // Traps if:
+  //   - [caller] is not a registered user.
+  //   - there is no datastore canister.
+  //   - it fails to generate a new datastore canister.
   public shared ({ caller }) func createNote(title: Text, content: Text) : async Result.Result<DefiniteNote, Text> {
     if (not (_isUserRegistered caller)) { return #err "You are not registered." };
 
@@ -138,13 +165,15 @@ shared ({ caller }) actor class Self() {
         await dataStoreCanister.createNote(caller, canisterId_, noteId, title, content);
       }
     }
-
   };
 
+  // Returns `true` if [caller] is a registered user.
   public shared query ({ caller }) func isRegistered(): async Bool {
     _isUserRegistered(caller)
   };
 
+  // Sets [_dataStoreCanister] to an actor of a datastore canister.
+  // Returns an actor of a datastore canister.
   private func _getDatastoreCanister(canisterId: Principal) : Types.Datastore {
     switch _dataStoreCanister {
       case null {
@@ -156,6 +185,9 @@ shared ({ caller }) actor class Self() {
     }
   };
 
+  // Generates a new datastore canister.
+  // Returns a canister id of the generated canister.
+  // Traps if it fails to generate a new canister.
   private func _generateDataStoreCanister(): async Result.Result<DatastoreCanisterId,Text>{
     try {
       Cycles.add(4_000_000_000_000);
@@ -181,10 +213,15 @@ shared ({ caller }) actor class Self() {
     }
   };
 
+  // Returns `true` if [principal] is a registered user.
   private func _isUserRegistered(principal: Principal): Bool {
     Option.isSome(_users.get(principal))
   };
 
+  // Below, we implement the upgrade hooks for our canister.
+  // See https://smartcontracts.org/docs/language-guide/upgrades.html
+
+  // The work required before a canister upgrade begins.
   system func preupgrade() {
     Debug.print("Starting pre-upgrade hook...");
     _stableUsers := Iter.toArray(_users.entries());
@@ -192,6 +229,7 @@ shared ({ caller }) actor class Self() {
     Debug.print("pre-upgrade finished.");
   };
 
+  // The work required after a canister upgrade ends.
   system func postupgrade() {
     Debug.print("Starting post-upgrade hook...");
     _stableUsers := [];

@@ -23,19 +23,31 @@ shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Dat
   type DefiniteNote = Types.DefiniteNote;
   type Byte = Types.Byte;
 
+  // Stable variables
   stable var _stableDatastores : [(NoteId, Note)] = [];
   
+  // Bind [caller] and [_main]
   let _main : Principal = caller;
+
   let _datastores = HashMap.fromIter<NoteId, Note>(_stableDatastores.vals(), 10, Nat.equal, Hash.hash);
   
+  // Creates a new note in a canister.
+  // Returns a created note.
+  // Traps if:
+  //   - [caller] is not [_main]. (Design choice: one cannot directly access a secondary (datastore) canister.)
+  //   - the data size exceeds the limit.
   public shared ({ caller }) func createNote(userId: UserId, canisterId: Principal, noteId: NoteId, title: Text, content: Text) : async Result.Result<DefiniteNote,Text> {
     if (_main != caller) { return #err "You can only create a note by calling the main canister." };
-    if (_isLimit (title # content)) { return #err "The data size exceeded the limit."};
+    if (_isLimit (title # content)) { return #err "The data size exceeded the limit." };
     let note = Note.create(noteId, canisterId, userId, title, content);
     _datastores.put(noteId, note);
     #ok (Note.freeze(note))
   };
 
+  // Returns a note of [noteId].
+  // Traps if:
+  //   - a note does not exist for a given [noteId].
+  //   - [caller] is not the owner of a note.
   public query ({ caller }) func getNoteById(noteId: NoteId) : async Result.Result<DefiniteNote,Text> {
     switch (_datastores.get(noteId)) {
       case null {
@@ -48,6 +60,8 @@ shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Dat
     }
   };
 
+  // Returns all notes of [caller].
+  // Returns an empty array if [caller] does not have any note in a canister.
   public query ({ caller }) func getAllNotes() : async [DefiniteNote] {
     let notes: HashMap.HashMap<NoteId, DefiniteNote> = HashMap.mapFilter<NoteId, Note, DefiniteNote>(_datastores, Nat.equal, Hash.hash, func (_: NoteId, note: Note) {
       if (note.userId == caller){
@@ -59,6 +73,12 @@ shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Dat
     Iter.toArray(notes.vals())
   };
 
+  // Updates a note of the [caller].
+  // Returns an updated note.
+  // Traps if:
+  //   - there is no note associated with a given [noteId].
+  //   - [caller] is not the owner of a note.
+  //   - the data size exceeds the limit.
   public shared ({ caller }) func updateNote(noteId: NoteId, title: ?Text, content: ?Text) : async Result.Result<DefiniteNote, Text> {
     switch (_datastores.get(noteId)) {
       case null {
@@ -75,6 +95,11 @@ shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Dat
     }
   };
 
+  // Deletes a note of [noteId]
+  // Returns [noteId] of a deleted note.
+  // Traps if:
+  //   - there is no note associated with a given [noteId].
+  //   - [caller] is not the owner of a note.
   public shared ({ caller }) func deleteNote(noteId: NoteId) : async Result.Result<NoteId, Text> {
     switch (_datastores.get(noteId)) {
       case null {
@@ -88,14 +113,17 @@ shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Dat
     }
   };
 
+  // Returns `true` if the owner of [note] is [userId].
   private func _isAuthenticated(note: Note, userId: UserId) : Bool {
     note.userId == userId
   };
 
+  // Returns `true` if the data size exceeds the limit.
   private func _isLimit(t: Text) : Bool {
     Text.encodeUtf8(t).size() > _noteDataSize
   };
 
+  // Returns `true` if the data size of an updated note exceeds the limit.
   private func _hasUpdateReachedLimit(note: Note, title: ?Text, content: ?Text) : Bool {
     switch(title, content){
       case (?t, ?c){
@@ -113,12 +141,17 @@ shared ({ caller }) actor class Self(_noteDataSize: Types.Byte): async Types.Dat
     }
   };
 
+  // Below, we implement the upgrade hooks for our canister.
+  // See https://smartcontracts.org/docs/language-guide/upgrades.html
+
+  // The work required before a canister upgrade begins.
   system func preupgrade() {
     Debug.print("Starting pre-upgrade hook...");
     _stableDatastores := Iter.toArray(_datastores.entries());
     Debug.print("pre-upgrade finished.");
   };
 
+  // The work required after a canister upgrade ends.
   system func postupgrade() {
     Debug.print("Starting post-upgrade hook...");
     _stableDatastores := [];
