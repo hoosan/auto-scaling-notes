@@ -33,7 +33,6 @@
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
     "@types/react-router-dom": "^5.3.3",
-    "@types/recoil": "^0.0.9",
     "assert": "2.0.0",
     "buffer": "6.0.3",
     "copy-webpack-plugin": "^9.0.1",
@@ -52,6 +51,7 @@
     "terser-webpack-plugin": "5.2.5",
     "ts-jest": "^27.1.4",
     "ts-loader": "^9.2.8",
+    "typescript": "^4.6.3",
     "util": "0.12.4",
     "webpack": "5.63.0",
     "webpack-cli": "4.9.1",
@@ -63,5 +63,7 @@
     "last 2 safari version",
     "last 2 edge version"
   ],
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+  }
 }
