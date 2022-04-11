@@ -16,7 +16,19 @@ A single canister stores multiple users' notes, and only the creator can access 
 When the capacity of the current secondary canister fills up, the primary canister automatically creates a next secondary canister.
 This behavior provides scalability when the number of users or notes increases.
 
-> You can find an alternative approach in, for example, IC-Drive, which also consists of primary and secondary canisters; the primary canister creates a secondary canister for each user, which the user occupies and uses.
+> You can find an alternative approach in, for example, [IC-Drive](https://github.com/IC-Drive/ic-drive), which also consists of primary and secondary canisters; the primary canister creates a secondary canister for each user, which the user occupies and uses.
+
+In this application, the limit for a single canister is 2 GB.
+This number is half of the 4GB limit mentioned above because double the memory of data may be needed when upgrading a canister.
+See [Encryoted Notes App's comments](https://github.com/dfinity/examples/blob/master/motoko/encrypted-notes-dapp/src/encrypted_notes_motoko/main.mo#L25-L28) on this.
+Also, the capacity per note is fixed at 1MB, which means that one canister can store 2GB/1MB = 2000 notes.
+The total number of notes is stored in the primary canister, and a new canister is automatically created when the number of notes becomes a multiple of 2000.
+For this reason, new memos must always be created through the primary canister.
+
+Because the notes are stored in multiple canisters, access to them requires some ingenuity.
+First, access the primary canister to obtain a list of secondary canisters.
+Next, access the secondary canisters in parallel to retrieve the notes stored in the canisters.
+Since multiple users' notes are stored in a canister, we check that the caller's principal ID and the creator of the note match, so that other users' notes cannot be viewed.
 
 # Disclaimer
 
