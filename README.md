@@ -24,8 +24,8 @@ In this application, the limit for a single canister is 2 GB.
 This number is half of the 4GB limit mentioned above because double the memory of data may be needed when upgrading a canister.
 See [Encryoted Notes App's comments](https://github.com/dfinity/examples/blob/master/motoko/encrypted-notes-dapp/src/encrypted_notes_motoko/main.mo#L25-L28) on this.
 Also, the capacity per note is fixed at 1MB, which means that one canister can store 2GB/1MB = 2000 notes.
-The total number of notes is stored in the primary canister, and a new canister is automatically created when the number of notes becomes a multiple of 2000.
-For this reason, new memos must always be created through the primary canister.
+The counter for a total number of notes is in the primary canister, and a new canister is automatically created when the number of notes becomes a multiple of 2000.
+For this reason, new notes must always be created through the primary canister.
 
 Because the notes are stored in multiple canisters, access to them requires some ingenuity.
 First, access the primary canister to obtain a list of secondary canisters.
