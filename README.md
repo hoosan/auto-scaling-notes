@@ -4,6 +4,8 @@ Auto Scaling Notes is an experimental Dapp for demonstrating how scalability wor
 Internet Computer's canister has a limit of 4GB of usable memory.
 Still, this limit can scale according to the number of users and notes by automatically adding canisters that store notes as needed.
 
+The app is up and running here: https://yflxa-iaaaa-aaaai-acfja-cai.ic0.app
+
 # Approach
 
 The back-end consists of two main types of canisters.
