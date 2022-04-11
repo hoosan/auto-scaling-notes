@@ -127,6 +127,6 @@ To learn more before you start working with Dapps on the Internet Computer, see 
 
 This project was developed for the [ICDevs.org Bounty #20 - QuickStart Dapp - Scaling With Canisters](https://forum.dfinity.org/t/icdevs-org-bounty-20-quickstart-dapp-scaling-with-canisters-200-icp-100-icp-50-icp-multiple-winners/11756)
 
-I thank [@krpeacoke](https://github.com/krpeacock), the author of [Auth-Client Demo](https://github.com/krpeacock/auth-client-demo), whose code was the starting point for this project's webpack configuration working with the internet identity.
+I want to thank [@krpeacoke](https://github.com/krpeacock), the author of [Auth-Client Demo](https://github.com/krpeacock/auth-client-demo), whose code was the starting point for this project's webpack configuration working with the internet identity.
 
-I thank the authors of [IC-Drive](https://github.com/IC-Drive/ic-drive), whose code was the starting point for this project's back-end.
+I want to thank the authors of [IC-Drive](https://github.com/IC-Drive/ic-drive), whose code was the starting point for this project's back-end.
